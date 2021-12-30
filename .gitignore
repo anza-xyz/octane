@@ -4,3 +4,4 @@
 root
 
 .env
+!.env.example
