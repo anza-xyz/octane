@@ -1,11 +1,9 @@
-import { Connection, Transaction, TransactionSignature } from '@solana/web3.js';
+import { Transaction, TransactionSignature } from '@solana/web3.js';
+import { connection } from './connection';
 import { ENV_SECRET_KEYPAIR } from './env';
 
 // Sign a transaction, simulate it, and broadcast it to the network
-export async function signAndSendTransaction(
-    transaction: Transaction,
-    connection: Connection
-): Promise<TransactionSignature> {
+export async function signAndSendTransaction(transaction: Transaction): Promise<TransactionSignature> {
     // Add the fee payer signature
     transaction.partialSign(ENV_SECRET_KEYPAIR);
 

@@ -1,9 +1,10 @@
 import { decodeInstruction, getAccount, isTransferCheckedInstruction, isTransferInstruction } from '@solana/spl-token';
-import { Connection, Transaction } from '@solana/web3.js';
+import { Transaction } from '@solana/web3.js';
+import { connection } from './connection';
 import { ENV_TRANSFER_ACCOUNT, ENV_TRANSFER_DECIMALS, ENV_TRANSFER_FEE, ENV_TRANSFER_MINT } from './env';
 
 // Check that a transaction passed to Octane contains a valid transfer to Octane's account
-export async function validateTransfer(transaction: Transaction, connection: Connection): Promise<void> {
+export async function validateTransfer(transaction: Transaction): Promise<void> {
     // Get the first instruction of the transaction
     const [transfer] = transaction.instructions;
     if (!transfer) throw new Error('missing instructions');

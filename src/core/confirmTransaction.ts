@@ -1,10 +1,8 @@
-import { ConfirmedTransaction, Connection, TransactionSignature } from '@solana/web3.js';
+import { ConfirmedTransaction, TransactionSignature } from '@solana/web3.js';
+import { connection } from './connection';
 
 // Check that a transaction has been confirmed
-export async function confirmTransaction(
-    signature: TransactionSignature,
-    connection: Connection
-): Promise<ConfirmedTransaction> {
+export async function confirmTransaction(signature: TransactionSignature): Promise<ConfirmedTransaction> {
     const result = await connection.confirmTransaction(signature, 'confirmed');
     if (result.value.err) throw result.value.err;
 

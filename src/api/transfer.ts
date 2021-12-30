@@ -1,13 +1,7 @@
-import { Connection, Transaction } from '@solana/web3.js';
+import { Transaction } from '@solana/web3.js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import base58 from 'bs58';
-import {
-    confirmTransaction,
-    ENV_RPC_URL,
-    signAndSendTransaction,
-    validateTransaction,
-    validateTransfer,
-} from '../core';
+import { confirmTransaction, signAndSendTransaction, validateTransaction, validateTransfer } from '../core';
 import { rateLimit } from '../middleware';
 
 // Endpoint to pay for transactions with an SPL token transfer
@@ -19,12 +13,9 @@ export default async function (request: VercelRequest, response: VercelResponse)
 
     const transaction = Transaction.from(base58.decode(request.body.transaction));
 
-    // Connect to the RPC node to query, simulate, and broadcast
-    const connection = new Connection(ENV_RPC_URL, 'confirmed');
-
     // Check that the transaction is basically valid and contains a valid transfer to Octane's account
-    await validateTransaction(transaction, connection);
-    await validateTransfer(transaction, connection);
+    await validateTransaction(transaction);
+    await validateTransfer(transaction);
 
     // FIXME:
     // a spammer could make several signing requests before the transaction is sent
@@ -33,9 +24,9 @@ export default async function (request: VercelRequest, response: VercelResponse)
     // we could add a timed lockout for the source token account to prevent this
 
     // Sign, send, and confirm the transaction
-    const signature = await signAndSendTransaction(transaction, connection);
+    const signature = await signAndSendTransaction(transaction);
 
-    await confirmTransaction(signature, connection);
+    await confirmTransaction(signature);
 
     // Respond with the transaction signature
     response.status(200).send({ signature });

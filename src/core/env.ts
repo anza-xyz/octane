@@ -1,5 +1,5 @@
-import { clusterApiUrl, Keypair, PublicKey } from "@solana/web3.js";
-import base58 from "bs58";
+import { clusterApiUrl, Keypair, PublicKey } from '@solana/web3.js';
+import base58 from 'bs58';
 
 export const ENV_SECRET_KEYPAIR = Keypair.fromSecretKey(base58.decode(process.env.SECRET_KEY || ''));
 export const ENV_FEE_PAYER = ENV_SECRET_KEYPAIR.publicKey;
