@@ -15,6 +15,7 @@
         "clean": "shx rm -rf root/*",
         "build": "yarn clean && esbuild --bundle --platform=node --target=node14 --outdir=root/api --sourcemap --legal-comments=none `find src/api \\\\( -name '*.ts' \\\\)`",
         "build:minify": "yarn run esbuild --minify",
+        "local": "yarn build && vercel dev",
         "test": "mocha",
         "fmt": "prettier --write '{*,**/*}.{js,ts,jsx,tsx,json}'",
         "lint": "eslint --ext .ts . && prettier --check '{*,**/*}.{js,ts,jsx,tsx,json}'",
