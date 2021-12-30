@@ -12,8 +12,8 @@
         "access": "public"
     },
     "scripts": {
-        "clean": "shx rm -rf root/*",
-        "build": "yarn clean && esbuild --bundle --platform=node --target=node14 --outdir=root/api --sourcemap --legal-comments=none `find src/api \\\\( -name '*.ts' \\\\)`",
+        "clean": "shx rm -rf public/*",
+        "build": "yarn clean && esbuild --bundle --platform=node --target=node14 --outdir=public/api --sourcemap --legal-comments=none `find src/api \\\\( -name '*.ts' \\\\)`",
         "build:minify": "yarn run esbuild --minify",
         "local": "yarn build && vercel dev",
         "test": "mocha",
