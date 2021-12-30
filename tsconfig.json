@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "rootDir": "src",
+        "outDir": "build",
+        "noEmit": true,
+        "declaration": true,
+        "sourceMap": true,
+        "noEmitOnError": true,
+        "stripInternal": true,
+        "target": "esnext",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "strict": true,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "typeRoots": ["node_modules/@types", "types"]
+    },
+    "include": ["src", "types"],
+    "exclude": ["node_modules"]
+}
