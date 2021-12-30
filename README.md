@@ -12,6 +12,8 @@ Sometimes users stake all their SOL or swap it for tokens or mint an NFT and don
 
 Sometimes a merchant or dApp would like to pay for certain transactions on behalf of their users.
 
+Octane is designed for anyone to be able to run for free on Vercel as a collection of serverless Node.js API functions.
+
 ## How does it work?
 
 Octane provides an API that lets users pay for transactions with SPL token transfers instead of native SOL.
@@ -25,8 +27,6 @@ The user sends the serialized transaction to an Octane REST API endpoint.
 Octane validates the transaction, signs it to pay the SOL, and broadcasts it on the Solana network.
 
 When the transaction is confirmed, Octane will have been paid a fee in the token for this service.
-
-Octane is designed for anyone to be able to run for free on Vercel as a collection of serverless Node.js API functions.
 
 ## Is this secure?
 
