@@ -1,23 +1,32 @@
-import { decodeInstruction, getAccount, isTransferCheckedInstruction, isTransferInstruction } from '@solana/spl-token';
+import {
+    DecodedTransferCheckedInstruction,
+    DecodedTransferInstruction,
+    decodeInstruction,
+    getAccount,
+    isTransferCheckedInstruction,
+    isTransferInstruction,
+} from '@solana/spl-token';
 import { Transaction } from '@solana/web3.js';
 import { connection } from './connection';
 import { ENV_TRANSFER_ACCOUNT, ENV_TRANSFER_DECIMALS, ENV_TRANSFER_FEE, ENV_TRANSFER_MINT } from './env';
 
-// Check that a transaction passed to Octane contains a valid transfer to Octane's account
-export async function validateTransfer(transaction: Transaction): Promise<void> {
+// Check that a transaction contains a valid transfer to Octane's token account
+export async function validateTransfer(
+    transaction: Transaction
+): Promise<DecodedTransferInstruction | DecodedTransferCheckedInstruction> {
     // Get the first instruction of the transaction
-    const [transfer] = transaction.instructions;
-    if (!transfer) throw new Error('missing instructions');
+    const [first] = transaction.instructions;
+    if (!first) throw new Error('missing instructions');
 
     // Decode the first instruction and make sure it's a valid SPL Token `Transfer` or `TransferChecked` instruction
-    const decoded = decodeInstruction(transfer);
-    if (!(isTransferInstruction(decoded) || isTransferCheckedInstruction(decoded)))
+    const instruction = decodeInstruction(first);
+    if (!(isTransferInstruction(instruction) || isTransferCheckedInstruction(instruction)))
         throw new Error('invalid transfer instruction');
 
     const {
         keys: { source, destination, owner },
         data: { amount },
-    } = decoded;
+    } = instruction;
 
     // Check that the instruction is going to pay the fee
     if (amount < ENV_TRANSFER_FEE) throw new Error('invalid amount');
@@ -44,11 +53,11 @@ export async function validateTransfer(transaction: Transaction): Promise<void> 
     if (!owner.isSigner) throw new Error('owner not signer');
 
     // If the instruction is a `TransferChecked` instruction, check that the mint and decimals are valid
-    if (isTransferCheckedInstruction(decoded)) {
+    if (isTransferCheckedInstruction(instruction)) {
         const {
             keys: { mint },
             data: { decimals },
-        } = decoded;
+        } = instruction;
 
         if (decimals !== ENV_TRANSFER_DECIMALS) throw new Error('invalid decimals');
 
@@ -56,4 +65,6 @@ export async function validateTransfer(transaction: Transaction): Promise<void> 
         if (mint.isWritable) throw new Error('mint is writable');
         if (mint.isSigner) throw new Error('mint is signer');
     }
+
+    return instruction;
 }

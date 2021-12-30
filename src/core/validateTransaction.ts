@@ -2,7 +2,7 @@ import { Transaction } from '@solana/web3.js';
 import { connection } from './connection';
 import { ENV_FEE_PAYER, ENV_LAMPORTS_PER_SIGNATURE } from './env';
 
-// Check that a transaction passed to Octane is basically valid
+// Check that a transaction is basically valid
 export async function validateTransaction(transaction: Transaction): Promise<void> {
     // Check the fee payer and blockhash for basic validity
     if (!transaction.feePayer?.equals(ENV_FEE_PAYER)) throw new Error('invalid fee payer');
