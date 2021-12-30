@@ -21,7 +21,7 @@ export async function validateTransfer(
     // Decode the first instruction and make sure it's a valid SPL Token `Transfer` or `TransferChecked` instruction
     const instruction = decodeInstruction(first);
     if (!(isTransferInstruction(instruction) || isTransferCheckedInstruction(instruction)))
-        throw new Error('invalid transfer instruction');
+        throw new Error('invalid instruction');
 
     const {
         keys: { source, destination, owner },
@@ -35,19 +35,12 @@ export async function validateTransfer(
     if (!source.isWritable) throw new Error('source not writable');
     if (source.isSigner) throw new Error('source is signer');
 
-    // Check that the source account exists, has the correct mint, is not frozen, and has enough funds
-    const account = await getAccount(connection, source.pubkey, 'confirmed');
-    if (!account.mint.equals(ENV_TRANSFER_MINT)) throw new Error('source invalid mint');
-    if (account.isFrozen) throw new Error('source frozen');
-    if (account.amount < amount) throw new Error('source insufficient balance');
-
     // Check that the destination account is Octane's and is valid
     if (!destination.pubkey.equals(ENV_TRANSFER_ACCOUNT)) throw new Error('invalid destination');
     if (!destination.isWritable) throw new Error('destination not writable');
     if (destination.isSigner) throw new Error('destination is signer');
 
-    // Check that the owner of the source account is correct, valid, and has signed
-    if (!owner.pubkey.equals(account.owner)) throw new Error('owner is invalid');
+    // Check that the owner of the source account is valid and has signed
     if (!owner.pubkey.equals(transaction.signatures[1].publicKey)) throw new Error('owner missing signature');
     if (owner.isWritable) throw new Error('owner is writable');
     if (!owner.isSigner) throw new Error('owner not signer');
@@ -65,6 +58,13 @@ export async function validateTransfer(
         if (mint.isWritable) throw new Error('mint is writable');
         if (mint.isSigner) throw new Error('mint is signer');
     }
+
+    // Check that the source account exists, has the correct owner and mint, is not frozen, and has enough funds
+    const account = await getAccount(connection, source.pubkey, 'confirmed');
+    if (!account.owner.equals(owner.pubkey)) throw new Error('source invalid owner');
+    if (!account.mint.equals(ENV_TRANSFER_MINT)) throw new Error('source invalid mint');
+    if (account.isFrozen) throw new Error('source frozen');
+    if (account.amount < amount) throw new Error('source insufficient balance');
 
     return instruction;
 }
