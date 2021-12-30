@@ -7,7 +7,14 @@ export async function signAndSimulateTransaction(transaction: Transaction): Prom
     // Add the fee payer signature
     transaction.partialSign(ENV_SECRET_KEYPAIR);
 
-    // Serialize the transaction before simulating it, which can cause the `signatures` property to change
+    /*
+       Serialize the transaction before simulating it, which can cause the `signatures` property to change.
+       Possibly related:
+       https://github.com/solana-labs/solana/issues/21722
+       https://github.com/solana-labs/solana/pull/21724
+       https://github.com/solana-labs/solana/issues/20743
+       https://github.com/solana-labs/solana/issues/22021
+     */
     const rawTransaction = transaction.serialize();
 
     // Simulate the transaction to make sure it's likely to succeed before paying for it
