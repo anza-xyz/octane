@@ -1,7 +1,7 @@
-import { Transaction } from '@solana/web3.js';
+import { sendAndConfirmRawTransaction, Transaction } from '@solana/web3.js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import base58 from 'bs58';
-import { confirmTransaction, signAndSendTransaction, validateTransaction, validateTransfer } from '../core';
+import { connection, signAndSimulateTransaction, validateTransaction, validateTransfer } from '../core';
 import { rateLimit } from '../middleware';
 
 // Endpoint to pay for transactions with an SPL token transfer
@@ -17,16 +17,16 @@ export default async function (request: VercelRequest, response: VercelResponse)
     await validateTransaction(transaction);
     await validateTransfer(transaction);
 
+    // Sign, send, and confirm the transaction
+    const rawTransaction = await signAndSimulateTransaction(transaction);
+
     // FIXME:
     // a spammer could make several signing requests before the transaction is sent
     // if the source token account account has the minimum balance, checks and simulation of all will succeed
     // then all but the first broadcast transaction to confirm will fail because the account is empty
     // we could add a timed lockout for the source token account to prevent this
 
-    // Sign, send, and confirm the transaction
-    const signature = await signAndSendTransaction(transaction);
-
-    await confirmTransaction(signature);
+    const signature = await sendAndConfirmRawTransaction(connection, rawTransaction, { commitment: 'confirmed' });
 
     // Respond with the transaction signature
     response.status(200).send({ signature });
