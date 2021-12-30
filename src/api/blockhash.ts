@@ -1,7 +1,7 @@
 import { Connection } from '@solana/web3.js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { ENV_RPC_URL } from '../core/env';
-import { rateLimit } from '../middleware/rateLimit';
+import { ENV_RPC_URL } from '../core';
+import { rateLimit } from '../middleware';
 
 // Endpoint to get the most recent blockhash seen by Octane's RPC node
 export default async function (request: VercelRequest, response: VercelResponse) {
