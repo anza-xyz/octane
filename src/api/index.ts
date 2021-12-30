@@ -20,7 +20,7 @@ const body = {
     },
 };
 
-// Endpoint to get the Octane's configuration
+// Endpoint to get Octane's configuration
 export default async function (request: VercelRequest, response: VercelResponse) {
     await rateLimit(request, response);
 
