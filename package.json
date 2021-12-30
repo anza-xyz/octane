@@ -12,9 +12,9 @@
         "access": "public"
     },
     "scripts": {
-        "clean": "shx rm -rf public/*",
-        "build": "yarn clean && esbuild --bundle --platform=node --target=node14 --outdir=public/api --sourcemap --legal-comments=none `find src/api \\\\( -name '*.ts' \\\\)`",
-        "build:minify": "yarn run esbuild --minify",
+        "clean": "shx rm -rf api/*",
+        "build": "yarn clean && esbuild --bundle --platform=node --target=node14 --outdir=api --sourcemap --legal-comments=none `find src/api \\\\( -name '*.ts' \\\\)`",
+        "vercel-build": "yarn run build --minify",
         "local": "yarn build && vercel dev",
         "test": "mocha",
         "fmt": "prettier --write '{*,**/*}.{js,ts,jsx,tsx,json}'",
