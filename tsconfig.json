@@ -1,6 +1,5 @@
 {
     "compilerOptions": {
-        "rootDir": "src",
         "noEmit": true,
         "declaration": true,
         "sourceMap": true,
