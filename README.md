@@ -1,5 +1,11 @@
 # Octane ⛽
 
+1. [What is Octane?](#what-is-octane)
+2. [How does it work?](#how-does-it-work)
+3. [Is this secure?](#is-this-secure)
+4. [What does Octane want?](#what-does-octane-want)
+5. [How do I use it?](#how-do-i-use-it)
+
 ## What is Octane?
 
 Octane is a gasless transaction relayer for Solana.
