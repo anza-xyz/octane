@@ -1,6 +1,8 @@
 .idea
 .vercel
 
+keys
+
 .env
 .env.*
 !.env.example
