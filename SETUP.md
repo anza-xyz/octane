@@ -50,9 +50,9 @@ In your editor, open the `.env` file.
 
 The values containing `__PLACEHOLDER__` need to be changed.
 
-`SECRET_KEY` is the base58 encoded secret key that Octane will sign transactions with.
-`TRANSFER_MINT` is the base58 encoded public key of an SPL token mint.
-`TRANSFER_ACCOUNT` is the base58 encoded public key of an SPL token account corresponding to this mint.
+- `SECRET_KEY` is the base58 encoded secret key that Octane will sign transactions with.
+- `TRANSFER_MINT` is the base58 encoded public key of an SPL token mint.
+- `TRANSFER_ACCOUNT` is the base58 encoded public key of an SPL token account corresponding to this mint.
 
 Let's start by creating a keypair and minting a token to test with.
 
