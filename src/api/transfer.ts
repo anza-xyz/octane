@@ -1,7 +1,7 @@
 import { sendAndConfirmRawTransaction, Transaction, TransactionSignature } from '@solana/web3.js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import base58 from 'bs58';
-import { connection, signAndSimulateTransaction, validateTransaction, validateTransfer } from '../core';
+import { connection, signTransaction, simulateRawTransaction, validateTransaction, validateTransfer } from '../core';
 import { rateLimit } from '../middleware';
 
 const locked = new Set<string>();
@@ -33,9 +33,19 @@ export default async function (request: VercelRequest, response: VercelResponse)
 
     let signature: TransactionSignature;
     try {
-        const rawTransaction = await signAndSimulateTransaction(transaction);
+        // Temporarily lockout the unique transaction signature too
+        signature = signTransaction(transaction);
+        if (locked.has(signature)) throw new Error('duplicate transaction');
+        locked.add(signature);
 
-        signature = await sendAndConfirmRawTransaction(connection, rawTransaction, { commitment: 'confirmed' });
+        try {
+            // Serialize, simulate, send, and confirm the transaction
+            const rawTransaction = transaction.serialize();
+            await simulateRawTransaction(rawTransaction);
+            await sendAndConfirmRawTransaction(connection, rawTransaction, { commitment: 'confirmed' });
+        } finally {
+            locked.delete(signature);
+        }
     } finally {
         locked.delete(source);
     }
