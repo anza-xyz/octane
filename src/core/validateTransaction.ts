@@ -9,6 +9,8 @@ export async function validateTransaction(transaction: Transaction): Promise<voi
     if (!transaction.feePayer?.equals(ENV_FEE_PAYER)) throw new Error('invalid fee payer');
     if (!transaction.recentBlockhash) throw new Error('missing recent blockhash');
 
+    // TODO: handle nonce accounts?
+
     // Check Octane's RPC node for the blockhash to make sure it's synced and the fee is reasonable
     const feeCalculator = await connection.getFeeCalculatorForBlockhash(transaction.recentBlockhash);
     if (!feeCalculator.value) throw new Error('blockhash not found');
