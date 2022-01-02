@@ -1,53 +1,46 @@
-import { sendAndConfirmRawTransaction, Transaction, TransactionSignature } from '@solana/web3.js';
+import { sendAndConfirmRawTransaction, Transaction } from '@solana/web3.js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import base58 from 'bs58';
-import { connection, signTransaction, simulateRawTransaction, validateTransaction, validateTransfer } from '../core';
+import { cache, connection, sha256, simulateRawTransaction, validateTransaction, validateTransfer } from '../core';
 import { rateLimit } from '../middleware';
-
-const locked = new Set<string>();
 
 // Endpoint to pay for transactions with an SPL token transfer
 export default async function (request: VercelRequest, response: VercelResponse) {
     await rateLimit(request, response);
 
     // Deserialize a base58 wire-encoded transaction from the request
-    if (typeof request.body?.transaction !== 'string') throw new Error('invalid request body');
+    const serialized = request.body?.transaction;
+    if (typeof serialized !== 'string') throw new Error('invalid transaction');
+    const transaction = Transaction.from(base58.decode(serialized));
 
-    const transaction = Transaction.from(base58.decode(request.body.transaction));
+    // Prevent simple duplicate transactions using a hash of the message
+    let key = `transaction/${base58.encode(sha256(transaction.serializeMessage()))}`;
+    if (await cache.get(key)) throw new Error('duplicate transaction');
+    await cache.set(key, true);
 
-    // Check that the transaction is basically valid and contains a valid transfer to Octane's token account
-    await validateTransaction(transaction);
+    // Check that the transaction is basically valid, sign it, and serialize it, verifying the signatures
+    const { signature, rawTransaction } = await validateTransaction(transaction);
 
+    // Check that the transaction contains a valid transfer to Octane's token account
     const transfer = await validateTransfer(transaction);
 
     /*
-       An attacker could make several signing requests before the transaction is confirmed. If the source token account
-       has the minimum fee balance, validation and simulation of all these requests will succeed. All but the first
+       An attacker could make multiple signing requests before the transaction is confirmed. If the source token account
+       has the minimum fee balance, validation and simulation of all these requests may succeed. All but the first
        confirmed transaction will fail because the account will be empty afterward. To prevent this race condition,
        simulation abuse, or similar attacks, we implement a simple lockout for the source token account until the
        transaction succeeds or fails.
      */
-    const source = transfer.keys.source.pubkey.toBase58();
-    if (locked.has(source)) throw new Error('source locked');
-    locked.add(source);
+    key = `transfer/${transfer.keys.source.pubkey.toBase58()}`;
+    if (await cache.get(key)) throw new Error('duplicate transfer');
+    await cache.set(key, true);
 
-    let signature: TransactionSignature;
     try {
-        // Temporarily lockout the unique transaction signature too
-        signature = signTransaction(transaction);
-        if (locked.has(signature)) throw new Error('duplicate transaction');
-        locked.add(signature);
-
-        try {
-            // Serialize, simulate, send, and confirm the transaction
-            const rawTransaction = transaction.serialize();
-            await simulateRawTransaction(rawTransaction);
-            await sendAndConfirmRawTransaction(connection, rawTransaction, { commitment: 'confirmed' });
-        } finally {
-            locked.delete(signature);
-        }
+        // Simulate, send, and confirm the transaction
+        await simulateRawTransaction(rawTransaction);
+        await sendAndConfirmRawTransaction(connection, rawTransaction, { commitment: 'confirmed' });
     } finally {
-        locked.delete(source);
+        await cache.del(key);
     }
 
     // Respond with the confirmed transaction signature
