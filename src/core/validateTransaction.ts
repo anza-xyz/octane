@@ -1,10 +1,13 @@
-import { Transaction } from '@solana/web3.js';
+import { Transaction, TransactionSignature } from '@solana/web3.js';
+import base58 from 'bs58';
 import config from '../../config.json';
 import { connection } from './connection';
-import { ENV_FEE_PAYER } from './env';
+import { ENV_FEE_PAYER, ENV_SECRET_KEYPAIR } from './env';
 
-// Check that a transaction is basically valid
-export async function validateTransaction(transaction: Transaction): Promise<void> {
+// Check that a transaction is basically valid, sign it, and serialize it, verifying the signatures
+export async function validateTransaction(
+    transaction: Transaction
+): Promise<{ signature: TransactionSignature; rawTransaction: Buffer }> {
     // Check the fee payer and blockhash for basic validity
     if (!transaction.feePayer?.equals(ENV_FEE_PAYER)) throw new Error('invalid fee payer');
     if (!transaction.recentBlockhash) throw new Error('missing recent blockhash');
@@ -36,4 +39,13 @@ export async function validateTransaction(transaction: Transaction): Promise<voi
                 throw new Error('invalid account');
         }
     }
+
+    // Add the fee payer signature
+    transaction.partialSign(ENV_SECRET_KEYPAIR);
+
+    // Serialize the transaction, verifying the signatures
+    const rawTransaction = transaction.serialize();
+
+    // Return the primary signature (aka txid) and serialized transaction
+    return { signature: base58.encode(transaction.signature!), rawTransaction };
 }
