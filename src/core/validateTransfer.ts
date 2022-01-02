@@ -28,7 +28,7 @@ const tokens = config.endpoints.transfer.tokens.reduce<Record<string, Token>>(fu
     return tokens;
 }, {});
 
-// Check that a transaction contains a valid transfer of an allowed token to Octane's token account
+// Check that a transaction contains a valid transfer to Octane's token account
 export async function validateTransfer(
     transaction: Transaction
 ): Promise<DecodedTransferInstruction | DecodedTransferCheckedInstruction> {
