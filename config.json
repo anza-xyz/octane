@@ -2,6 +2,7 @@
     "rpcUrl": "https://api.devnet.solana.com",
     "maxSignatures": 2,
     "lamportsPerSignature": 5000,
+    "corsOrigin": true,
     "endpoints": {
         "transfer": {
             "tokens": [

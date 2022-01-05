@@ -2,10 +2,11 @@ import { sendAndConfirmRawTransaction, Transaction } from '@solana/web3.js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import base58 from 'bs58';
 import { cache, connection, sha256, simulateRawTransaction, validateTransaction, validateTransfer } from '../core';
-import { rateLimit } from '../middleware';
+import { cors, rateLimit } from '../middleware';
 
 // Endpoint to pay for transactions with an SPL token transfer
 export default async function (request: VercelRequest, response: VercelResponse) {
+    await cors(request, response);
     await rateLimit(request, response);
 
     // Deserialize a base58 wire-encoded transaction from the request
