@@ -6,9 +6,27 @@ import {
     isTransferCheckedInstruction,
     isTransferInstruction,
 } from '@solana/spl-token';
-import { Transaction } from '@solana/web3.js';
+import { PublicKey, Transaction } from '@solana/web3.js';
+import config from '../../config.json';
 import { connection } from './connection';
-import { ENV_TRANSFER_ACCOUNT, ENV_TRANSFER_DECIMALS, ENV_TRANSFER_FEE, ENV_TRANSFER_MINT } from './env';
+
+// Define a lookup table of allowed token mint public keys to their config values
+interface Token {
+    mint: PublicKey;
+    account: PublicKey;
+    decimals: number;
+    fee: bigint;
+}
+
+const tokens = config.endpoints.transfer.tokens.reduce<Record<string, Token>>(function (tokens, token) {
+    tokens[token.mint] = {
+        mint: new PublicKey(token.mint),
+        account: new PublicKey(token.account),
+        decimals: token.decimals,
+        fee: BigInt(token.fee),
+    };
+    return tokens;
+}, {});
 
 // Check that a transaction contains a valid transfer to Octane's token account
 export async function validateTransfer(
@@ -28,15 +46,25 @@ export async function validateTransfer(
         data: { amount },
     } = instruction;
 
+    // Check that the source account exists, has the correct owner, is not frozen, and has enough funds
+    const account = await getAccount(connection, source.pubkey, 'confirmed');
+    if (!account.owner.equals(owner.pubkey)) throw new Error('source invalid owner');
+    if (account.isFrozen) throw new Error('source frozen');
+    if (account.amount < amount) throw new Error('source insufficient balance');
+
+    // Check that the source account's mint is one of the accepted tokens
+    const token = tokens[account.mint.toBase58()];
+    if (!token) throw new Error('invalid token');
+
     // Check that the instruction is going to pay the fee
-    if (amount < ENV_TRANSFER_FEE) throw new Error('invalid amount');
+    if (amount < token.fee) throw new Error('invalid amount');
 
     // Check that the instruction has a valid source account
     if (!source.isWritable) throw new Error('source not writable');
     if (source.isSigner) throw new Error('source is signer');
 
     // Check that the destination account is Octane's and is valid
-    if (!destination.pubkey.equals(ENV_TRANSFER_ACCOUNT)) throw new Error('invalid destination');
+    if (!destination.pubkey.equals(token.account)) throw new Error('invalid destination');
     if (!destination.isWritable) throw new Error('destination not writable');
     if (destination.isSigner) throw new Error('destination is signer');
 
@@ -52,19 +80,12 @@ export async function validateTransfer(
             data: { decimals },
         } = instruction;
 
-        if (decimals !== ENV_TRANSFER_DECIMALS) throw new Error('invalid decimals');
+        if (decimals !== token.decimals) throw new Error('invalid decimals');
 
-        if (!mint.pubkey.equals(ENV_TRANSFER_MINT)) throw new Error('invalid mint');
+        if (!mint.pubkey.equals(token.mint)) throw new Error('invalid mint');
         if (mint.isWritable) throw new Error('mint is writable');
         if (mint.isSigner) throw new Error('mint is signer');
     }
-
-    // Check that the source account exists, has the correct owner and mint, is not frozen, and has enough funds
-    const account = await getAccount(connection, source.pubkey, 'confirmed');
-    if (!account.owner.equals(owner.pubkey)) throw new Error('source invalid owner');
-    if (!account.mint.equals(ENV_TRANSFER_MINT)) throw new Error('source invalid mint');
-    if (account.isFrozen) throw new Error('source frozen');
-    if (account.amount < amount) throw new Error('source insufficient balance');
 
     return instruction;
 }

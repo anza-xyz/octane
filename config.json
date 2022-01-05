@@ -1,0 +1,18 @@
+{
+    "rpcUrl": "https://api.devnet.solana.com",
+    "maxSignatures": 2,
+    "lamportsPerSignature": 5000,
+    "corsOrigin": true,
+    "endpoints": {
+        "transfer": {
+            "tokens": [
+                {
+                    "mint": "__PLACEHOLDER__",
+                    "account": "__PLACEHOLDER__",
+                    "decimals": 9,
+                    "fee": 10000000
+                }
+            ]
+        }
+    }
+}
