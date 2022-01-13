@@ -5,7 +5,7 @@ import { wrapExpressHandler } from './wrapExpressHandler';
 // Just basic IP rate-limiting for now
 export const rateLimit = wrapExpressHandler(
     expressRateLimit({
-        max: ENV_RATE_LIMIT,
-        windowMs: ENV_RATE_LIMIT_INTERVAL,
+        max: ENV_RATE_LIMIT ?? 10,
+        windowMs: ENV_RATE_LIMIT_INTERVAL ?? 60,
     })
 );
