@@ -2,7 +2,9 @@ import { PublicKey, Transaction } from '@solana/web3.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import base58 from 'bs58';
 import { signWithTokenFee } from '../../src';
-import { cache, connection, ENV_SECRET_KEYPAIR } from '../../src/helpers';
+import { cache } from '../../src/helpers/cache';
+import { connection } from '../../src/helpers/connection';
+import { ENV_SECRET_KEYPAIR } from '../../src/helpers/env';
 import { cors, rateLimit } from '../../src/middleware';
 import config from '../../config.json';
 

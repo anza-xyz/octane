@@ -42,7 +42,7 @@ export async function validateTransfer(
     if (account.amount < amount) throw new Error('source insufficient balance');
 
     // Check that the source account's mint is one of the accepted tokens
-    const token = allowedTokens.find((token) => token.mint === account.mint);
+    const token = allowedTokens.find((token) => token.mint.equals(account.mint));
     if (!token) throw new Error('invalid token');
 
     // Check that the instruction is going to pay the fee

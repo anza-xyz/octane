@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import config from '../../config.json';
-import { ENV_FEE_PAYER } from '../../src/helpers';
+import { ENV_FEE_PAYER } from '../../src/helpers/env';
 import { rateLimit } from '../../src/middleware';
 
 const body = {
