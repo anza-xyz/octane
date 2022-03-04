@@ -12,24 +12,26 @@
         "access": "public"
     },
     "scripts": {
-        "clean": "shx rm -rf build/*",
-        "build": "yarn clean && esbuild --bundle --platform=node --target=node14 --outdir=build --sourcemap --legal-comments=none `find src/api \\\\( -name '*.ts' \\\\)`",
-        "vercel-build": "yarn run build --minify",
-        "local": "vercel dev",
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint && prettier --check '{*,**/*}.{js,ts,jsx,tsx,json}'",
+        "lint:fix": "eslint --fix --ext .ts . && yarn fmt",
         "test": "mocha",
         "fmt": "prettier --write '{*,**/*}.{js,ts,jsx,tsx,json}'",
-        "lint": "eslint --ext .ts . && prettier --check '{*,**/*}.{js,ts,jsx,tsx,json}'",
-        "lint:fix": "eslint --fix --ext .ts . && yarn fmt",
         "nuke": "shx rm -rf node_modules yarn.lock"
     },
     "dependencies": {
         "@solana/buffer-layout": "^4.0.0",
-        "@solana/spl-token": "^0.2.0-alpha.1",
+        "@solana/spl-token": "^0.2.0",
         "@solana/web3.js": "^1.31.0",
         "bs58": "^4.0.1",
         "cache-manager": "^3.6.0",
         "cors": "^2.8.5",
-        "express-rate-limit": "^5.5.1"
+        "express-rate-limit": "^5.5.1",
+        "next": "^12.1.0",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2"
     },
     "devDependencies": {
         "@types/bs58": "^4.0.1",
@@ -43,6 +45,7 @@
         "@types/mocha": "^9.0.0",
         "@types/node": "^16.11.13",
         "@types/prettier": "^2.4.2",
+        "@types/react": "^17.0.39",
         "@typescript-eslint/eslint-plugin": "^5.7.0",
         "@typescript-eslint/parser": "^5.7.0",
         "@vercel/node": "^1.12.1",

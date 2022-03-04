@@ -1,8 +1,8 @@
-import { PublicKey, SimulatedTransactionResponse, Transaction } from '@solana/web3.js';
-import { connection } from './connection';
+import { Connection, PublicKey, SimulatedTransactionResponse, Transaction } from '@solana/web3.js';
 
 // Simulate a signed, serialized transaction before broadcasting
 export async function simulateRawTransaction(
+    connection: Connection,
     rawTransaction: Buffer,
     includeAccounts?: boolean | Array<PublicKey>
 ): Promise<SimulatedTransactionResponse> {

@@ -8,7 +8,13 @@
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "isolatedModules": true,
-        "typeRoots": ["node_modules/@types", "types"]
+        "typeRoots": ["node_modules/@types", "types"],
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "allowJs": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "incremental": true,
+        "jsx": "preserve"
     },
     "include": ["src", "types"],
     "exclude": ["node_modules"]
