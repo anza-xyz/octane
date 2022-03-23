@@ -13,6 +13,7 @@ import { sha256, simulateRawTransaction, validateTransaction, validateTransfer, 
  * @param allowedTokens        List of tokens that can be used with token fee receiver accounts and fee details
  * @param feePayer             Keypair for fee payer
  * @param cache                A cache to store duplicate transactions
+ * @param sameSourceTimeout    An interval for transactions with same token fee source, ms
  *
  * @return {signature: string} Transaction signature by fee payer
  */
@@ -23,7 +24,8 @@ export async function signWithTokenFee(
     maxSignatures: number,
     lamportsPerSignature: number,
     allowedTokens: AllowedToken[],
-    cache: Cache
+    cache: Cache,
+    sameSourceTimeout: number = 5000,
 ): Promise<{ signature: string }> {
     // Prevent simple duplicate transactions using a hash of the message
     let key = `transaction/${base58.encode(sha256(transaction.serializeMessage()))}`;
@@ -46,19 +48,17 @@ export async function signWithTokenFee(
        An attacker could make multiple signing requests before the transaction is confirmed. If the source token account
        has the minimum fee balance, validation and simulation of all these requests may succeed. All but the first
        confirmed transaction will fail because the account will be empty afterward. To prevent this race condition,
-       simulation abuse, or similar attacks, we implement a simple lockout for the source token account until the
-       transaction succeeds or fails.
+       simulation abuse, or similar attacks, we implement a simple lockout for the source token account
+       for a few seconds after the transaction.
      */
-    key = `transfer/${transfer.keys.source.pubkey.toBase58()}`;
-    if (await cache.get(key)) throw new Error('duplicate transfer');
-    await cache.set(key, true);
-
-    try {
-        // Simulate, send, and confirm the transaction
-        await simulateRawTransaction(connection, rawTransaction);
-    } finally {
-        await cache.del(key);
+    key = `transfer/lastSignature/${transfer.keys.source.pubkey.toBase58()}`;
+    const lastSignature: number | undefined = await cache.get(key);
+    if (lastSignature && Date.now() - lastSignature < sameSourceTimeout) {
+        throw new Error('duplicate transfer');
     }
+    await cache.set(key, Date.now());
+
+    await simulateRawTransaction(connection, rawTransaction);
 
     return { signature: signature };
 }

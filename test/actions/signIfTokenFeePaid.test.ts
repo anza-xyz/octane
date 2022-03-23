@@ -14,7 +14,7 @@ import {
 import { signWithTokenFee } from '../../src';
 import { AllowedToken } from '../../src/core';
 import { cache } from '../../src/helpers/cache';
-import { airdropLamports } from '../common';
+import { airdropLamports, sleep } from '../common';
 
 use(chaiAsPromised);
 
@@ -119,6 +119,54 @@ if (process.env.TEST_LIVE) {
             await expect(
                 signWithTokenFee(connection, transaction, feePayerKeypair, 2, 5000, baseAllowedTokens, cache)
             ).to.be.rejectedWith('duplicate transaction');
+        });
+
+        // todo: actually simulate race condition
+        it('rejects a transfer from the same account before timeout expires', async () => {
+            const sameSourceTimeout = 500;
+            // Make 3 transactions with different amounts to avoid 'duplicate transaction' error
+            const transaction1 = new Transaction().add(
+                createTransferInstruction(sourceAccount, feePayerTokenAccount.address, sourceOwner.publicKey, 100)
+            );
+            const transaction2 = new Transaction().add(
+                createTransferInstruction(sourceAccount, feePayerTokenAccount.address, sourceOwner.publicKey, 101)
+            );
+            const transaction3 = new Transaction().add(
+                createTransferInstruction(sourceAccount, feePayerTokenAccount.address, sourceOwner.publicKey, 102)
+            );
+
+            for (const transaction of [transaction1, transaction2, transaction3]) {
+                transaction.feePayer = feePayerKeypair.publicKey;
+                transaction.recentBlockhash = recentBlockhash;
+                transaction.partialSign(sourceOwner);
+            }
+
+            const { signature: signature1 } = await signWithTokenFee(
+                connection,
+                transaction1,
+                feePayerKeypair,
+                2,
+                5000,
+                baseAllowedTokens,
+                cache,
+                sameSourceTimeout,
+            );
+            expect(signature1).to.not.be.empty;
+            await expect(
+                signWithTokenFee(connection, transaction2, feePayerKeypair, 2, 5000, baseAllowedTokens, cache, sameSourceTimeout)
+            ).to.be.rejectedWith('duplicate transfer');
+            await sleep(sameSourceTimeout);
+            const { signature: signature3  } = await signWithTokenFee(
+                connection,
+                transaction3,
+                feePayerKeypair,
+                2,
+                5000,
+                baseAllowedTokens,
+                cache,
+                sameSourceTimeout,
+            );
+            expect(signature3).to.not.be.empty;
         });
 
         // todo: cover more errors
