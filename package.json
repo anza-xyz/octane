@@ -5,9 +5,6 @@
     "author": "Solana Maintainers <maintainers@solana.foundation>",
     "repository": "https://github.com/solana-labs/octane",
     "license": "Apache-2.0",
-    "engines": {
-        "node": "14.x"
-    },
     "publishConfig": {
         "access": "public"
     },
