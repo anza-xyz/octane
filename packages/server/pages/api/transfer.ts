@@ -1,12 +1,9 @@
 import { PublicKey, Transaction } from '@solana/web3.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import base58 from 'bs58';
-import { signWithTokenFee } from '../../src';
-import { cache } from '../../src/helpers/cache';
-import { connection } from '../../src/helpers/connection';
-import { ENV_SECRET_KEYPAIR } from '../../src/helpers/env';
-import { cors, rateLimit } from '../../src/middleware';
-import config from '../../config.json';
+import { signWithTokenFee } from 'octane-core';
+import { cache, connection, ENV_SECRET_KEYPAIR, cors, rateLimit } from '../../src';
+import config from '../../../../config.json';
 
 // Endpoint to pay for transactions with an SPL token transfer
 export default async function (request: NextApiRequest, response: NextApiResponse) {
@@ -46,7 +43,7 @@ export default async function (request: NextApiRequest, response: NextApiRespons
         // Respond with the confirmed transaction signature
         response.status(200).send({ status: 'ok', signature });
     } catch (error) {
-        let message: string = '';
+        let message = '';
         if (error instanceof Error) {
             message = error.message;
         }

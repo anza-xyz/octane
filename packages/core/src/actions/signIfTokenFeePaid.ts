@@ -25,7 +25,7 @@ export async function signWithTokenFee(
     lamportsPerSignature: number,
     allowedTokens: AllowedToken[],
     cache: Cache,
-    sameSourceTimeout: number = 5000,
+    sameSourceTimeout = 5000
 ): Promise<{ signature: string }> {
     // Prevent simple duplicate transactions using a hash of the message
     let key = `transaction/${base58.encode(sha256(transaction.serializeMessage()))}`;
