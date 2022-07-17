@@ -1,6 +1,6 @@
 {
     "name": "@solana/octane-core",
-    "version": "0.0.1-alpha.0",
+    "version": "0.0.1",
     "description": "Tools to enable gasless transactions on Solana",
     "author": "Solana Maintainers <maintainers@solana.foundation>",
     "homepage": "https://github.com/solana-labs/octane",
