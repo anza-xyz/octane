@@ -1,7 +1,7 @@
 import { PublicKey, Transaction } from '@solana/web3.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import base58 from 'bs58';
-import { signWithTokenFee } from 'octane-core';
+import { signWithTokenFee } from '@solana/octane-core';
 import { cache, connection, ENV_SECRET_KEYPAIR, cors, rateLimit } from '../../src';
 import config from '../../../../config.json';
 
