@@ -1,5 +1,5 @@
 import expressRateLimit from 'express-rate-limit';
-import { ENV_RATE_LIMIT, ENV_RATE_LIMIT_INTERVAL } from '../core';
+import { ENV_RATE_LIMIT, ENV_RATE_LIMIT_INTERVAL } from '../env';
 import { wrapExpressHandler } from './wrapExpressHandler';
 
 // Just basic IP rate-limiting for now

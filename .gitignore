@@ -3,8 +3,13 @@
 
 keys
 
-.env
-.env.*
-!.env.example
+packages/server/.env
+!packages/server/.env.example
 
 node_modules/
+
+.next
+next-env.d.ts
+
+test-ledger
+dist/
