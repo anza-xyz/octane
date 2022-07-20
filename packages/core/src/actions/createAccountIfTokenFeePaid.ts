@@ -1,22 +1,23 @@
-import { Transaction, Connection, Keypair } from '@solana/web3.js';
-import type { Cache } from 'cache-manager';
-import base58 from 'bs58';
+import { Connection, Keypair, Transaction } from '@solana/web3.js';
 import {
+    AllowedToken,
     sha256,
     simulateRawTransaction,
+    validateAccountInitializationInstructions,
     validateTransaction,
     validateTransfer,
-    AllowedToken,
-    validateInstructions,
 } from '../core';
+import { Cache } from 'cache-manager';
+import base58 from 'bs58';
 
 /**
- * Sign transaction by fee payer if the first instruction is a transfer of token fee to given account
+ * Sign transaction by fee payer if the first instruction is a transfer of a fee to given account and the second instruction
+ * creates an associated token account with initialization fees by fee payer.
  *
  * @param connection           Connection to a Solana node
  * @param transaction          Transaction to sign
  * @param maxSignatures        Maximum allowed signatures in the transaction including fee payer's
- * @param lamportsPerSignature Maximum fee payment in lamports
+ * @param lamportsPerSignature Maximum transaction fee payment in lamports
  * @param allowedTokens        List of tokens that can be used with token fee receiver accounts and fee details
  * @param feePayer             Keypair for fee payer
  * @param cache                A cache to store duplicate transactions
@@ -24,7 +25,7 @@ import {
  *
  * @return {signature: string} Transaction signature by fee payer
  */
-export async function signWithTokenFee(
+export async function createAccountIfTokenFeePaid(
     connection: Connection,
     transaction: Transaction,
     feePayer: Keypair,
@@ -33,7 +34,7 @@ export async function signWithTokenFee(
     allowedTokens: AllowedToken[],
     cache: Cache,
     sameSourceTimeout = 5000
-): Promise<{ signature: string }> {
+) {
     // Prevent simple duplicate transactions using a hash of the message
     let key = `transaction/${base58.encode(sha256(transaction.serializeMessage()))}`;
     if (await cache.get(key)) throw new Error('duplicate transaction');
@@ -48,19 +49,13 @@ export async function signWithTokenFee(
         lamportsPerSignature
     );
 
-    await validateInstructions(transaction, feePayer);
+    // Check that transaction only contains transfer and a valid new account
+    await validateAccountInitializationInstructions(connection, transaction, feePayer, cache);
 
     // Check that the transaction contains a valid transfer to Octane's token account
     const transfer = await validateTransfer(connection, transaction, allowedTokens);
 
-    /*
-       An attacker could make multiple signing requests before the transaction is confirmed. If the source token account
-       has the minimum fee balance, validation and simulation of all these requests may succeed. All but the first
-       confirmed transaction will fail because the account will be empty afterward. To prevent this race condition,
-       simulation abuse, or similar attacks, we implement a simple lockout for the source token account
-       for a few seconds after the transaction.
-     */
-    key = `transfer/lastSignature/${transfer.keys.source.pubkey.toBase58()}`;
+    key = `createAccount/lastSignature/${transfer.keys.source.pubkey.toBase58()}`;
     const lastSignature: number | undefined = await cache.get(key);
     if (lastSignature && Date.now() - lastSignature < sameSourceTimeout) {
         throw new Error('duplicate transfer');

@@ -2,6 +2,8 @@ import { Connection, Transaction, TransactionSignature, Keypair } from '@solana/
 import base58 from 'bs58';
 
 // Check that a transaction is basically valid, sign it, and serialize it, verifying the signatures
+// This function doesn't check if payer fee was transferred (instead, use validateTransfer) or
+// instruction signatures do not include fee payer as a writable account (instead, use validateInstructions).
 export async function validateTransaction(
     connection: Connection,
     transaction: Transaction,
@@ -31,14 +33,6 @@ export async function validateTransaction(
     for (const signature of secondary) {
         if (!signature.publicKey) throw new Error('missing public key');
         if (!signature.signature) throw new Error('missing signature');
-    }
-
-    // Prevent draining by making sure that the fee payer isn't provided as writable or a signer to any instruction
-    for (const instruction of transaction.instructions) {
-        for (const key of instruction.keys) {
-            if ((key.isWritable || key.isSigner) && key.pubkey.equals(feePayer.publicKey))
-                throw new Error('invalid account');
-        }
     }
 
     // Add the fee payer signature
