@@ -4,13 +4,7 @@ import base58 from 'bs58';
 // @ts-ignore (TS7016) There is no type definition for this at DefinitelyTyped.
 import MemoryStore from 'cache-manager/lib/stores/memory';
 import cacheManager from 'cache-manager';
-import {
-    Keypair,
-    PublicKey,
-    Connection,
-    Transaction,
-    sendAndConfirmRawTransaction,
-} from '@solana/web3.js';
+import { Keypair, PublicKey, Connection, Transaction, sendAndConfirmRawTransaction } from '@solana/web3.js';
 import {
     createMint,
     getAssociatedTokenAddress,

@@ -13,7 +13,7 @@ export async function validateAccountInitializationInstructions(
     feePayer: Keypair,
     cache: Cache
 ): Promise<void> {
-    const transaction = Transaction.from(originalTransaction.serialize({requireAllSignatures: false}));
+    const transaction = Transaction.from(originalTransaction.serialize({ requireAllSignatures: false }));
 
     // Transaction instructions should be: [fee transfer, account initialization]
     // The fee transfer is validated with validateTransfer in the action function.
