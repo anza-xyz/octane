@@ -71,8 +71,8 @@ Now, open the `config.json` file.
 
 These `__PLACEHOLDER__` values must also change.
 
-- `TRANSFER_MINT` is the base58 encoded public key of an SPL token mint.
-- `TRANSFER_ACCOUNT` is the base58 encoded public key of an SPL token account corresponding to this mint.
+- `mint` is the base58 encoded public key of an SPL token mint.
+- `account` is the base58 encoded public key of an SPL token account corresponding to this mint.
 
 From the command line, run these commands:
 ```shell
