@@ -1,3 +1,4 @@
+export * from './clusters';
 export * from './sha256';
 export * from './simulateRawTransaction';
 export * from './validateTransaction';
