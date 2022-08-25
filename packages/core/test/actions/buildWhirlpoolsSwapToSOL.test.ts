@@ -41,7 +41,7 @@ describe('buildWhirlpoolsSwapToSOL action', async () => {
 
         expect(transaction.feePayer!.equals(feePayerStub.publicKey)).to.be.true;
         expect(transaction.signatures[0].publicKey.equals(feePayerStub.publicKey)).to.be.true;
-        expect(transaction.signatures[0].signature).to.not.be.null;
+        expect(transaction.signatures[0].signature).to.be.null;
         expect(transaction.signatures[1].publicKey.equals(userWithUSDC)).to.be.true;
         expect(transaction.signatures[1].signature).to.be.null;
 
@@ -180,7 +180,7 @@ describe('buildWhirlpoolsSwapToSOL action', async () => {
         expect(transaction.feePayer!.equals(feePayerStub.publicKey)).to.be.true;
 
         expect(transaction.signatures[0].publicKey.equals(feePayerStub.publicKey)).to.be.true;
-        expect(transaction.signatures[0].signature).to.not.be.null;
+        expect(transaction.signatures[0].signature).to.be.null;
         expect(transaction.signatures[1].publicKey.equals(userWithUSDC)).to.be.true;
         expect(transaction.signatures[1].signature).to.be.null;
 

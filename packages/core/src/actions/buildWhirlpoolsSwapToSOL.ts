@@ -12,7 +12,7 @@ import {
 import { Percentage } from '@orca-so/common-sdk';
 import type { Cache } from 'cache-manager';
 
-import { simulateRawTransaction, isMainnetBetaCluster } from '../core';
+import { simulateRawTransaction, isMainnetBetaCluster, MessageToken } from '../core';
 import { whirlpools } from '../swapProviders';
 
 export type FeeOptions = {
@@ -22,7 +22,7 @@ export type FeeOptions = {
 };
 
 /**
- * Builds a partially signed transaction that performs a swap to SOL and optionally sends a token fee to Octane
+ * Builds an unsigned transaction that performs a swap to SOL and optionally sends a token fee to Octane
  *
  * @param connection
  * @param feePayer
@@ -34,7 +34,7 @@ export type FeeOptions = {
  * @param sameMintTimeout A required interval for transactions with same source mint and user, ms
  * @param feeOptions?
  *
- * @return Transaction to Octane with fee payer's signature
+ * @return Transaction
  */
 export async function buildWhirlpoolsSwapToSOL(
     connection: Connection,
@@ -46,7 +46,7 @@ export async function buildWhirlpoolsSwapToSOL(
     cache: Cache,
     sameMintTimeout = 3000,
     feeOptions?: FeeOptions,
-): Promise<{ transaction: Transaction; quote: SwapQuote }> {
+): Promise<{ transaction: Transaction; quote: SwapQuote, messageToken: string }> {
     // Connection's genesis hash is cached to prevent an extra RPC query to the node on each call.
     const genesisHashKey = `genesis/${connection.rpcEndpoint}`;
     let genesisHash = await cache.get<string>(genesisHashKey);
@@ -119,10 +119,14 @@ export async function buildWhirlpoolsSwapToSOL(
         transaction.serialize({verifySignatures: false}),
     );
 
-    transaction.partialSign(feePayer);
+    const messageToken = new MessageToken(
+        whirlpools.MESSAGE_TOKEN_KEY,
+        transaction.compileMessage(),
+        feePayer
+    ).compile();
 
     // set last signature for mint and user
     await cache.set<number>(key, Date.now());
 
-    return {transaction, quote};
+    return {transaction, quote, messageToken};
 }

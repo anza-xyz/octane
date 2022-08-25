@@ -21,6 +21,8 @@ const WHIRLPOOL_PROGRAM_ID = new PublicKey('whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff
 const WHIRLPOOL_CONFIG_KEY = new PublicKey('2LecshUwdy9xi7meFgHtFJQNSKk4KdTrcpvaB56dP2NQ');
 const WHIRLPOOL_TICK_SPACING = 64;
 
+export const MESSAGE_TOKEN_KEY = 'whirlpools-swap';
+
 export function getWhirlpoolsContext(connection: Connection): WhirlpoolContext {
     // We use the context only for getting quotes and looking up instructions, so no need for real keypair
     const wallet = new Wallet(Keypair.generate());
