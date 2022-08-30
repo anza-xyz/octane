@@ -1,14 +1,9 @@
 import { Command } from 'commander';
-import { LAMPORTS_PER_SOL, PublicKey, Transaction } from '@solana/web3.js';
 import {
-    createAssociatedTokenAccount,
-    getAccount,
-    getAssociatedTokenAddress,
     getMinimumBalanceForRentExemptAccount,
 } from '@solana/spl-token';
-import axios from 'axios';
-import { connection, ENV_SECRET_KEYPAIR, getLamportsPerSignature,
-    loadPopularTokensFromJupiter, createTokenConfigEntries } from './index';
+import { PayerUtils, core } from '@solana/octane-core';
+import { connection, ENV_SECRET_KEYPAIR } from './index';
 import config from '../../../config.json';
 
 const MAINNET_BETA_GENESIS_HASH = '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d';
@@ -43,8 +38,8 @@ program
             return;
         }
 
-        const popularTokenMints = await loadPopularTokensFromJupiter(tokensFromTop);
-        const lamportsPerSignature = await getLamportsPerSignature(connection);
+        const popularTokenMints = await PayerUtils.getPopularTokens(tokensFromTop);
+        const lamportsPerSignature = await PayerUtils.getLamportsPerSignature(connection);
 
         let cost: number;
         if (includeAccountFees) {
@@ -53,14 +48,24 @@ program
             cost = lamportsPerSignature;
         }
 
-        console.log(`lamportsPerSignature: ${lamportsPerSignature}`);
-        console.log(JSON.stringify(await createTokenConfigEntries(
+        const tokensWithPriceInfo = await Promise.all(popularTokenMints.map(async mint => ({
+            mint: mint,
+            priceInfo: await PayerUtils.getTokenToNativePriceInfo(mint)
+        })));
+        const pricingParams = {
+            costInLamports: cost,
+            margin: margin,
+        };
+
+        const tokenFees = await PayerUtils.buildTokenFeeList(
             connection,
             ENV_SECRET_KEYPAIR.publicKey,
-            popularTokenMints,
-            cost,
-            margin,
-        ), undefined, 4));
+            tokensWithPriceInfo,
+            pricingParams,
+        );
+
+        console.log(`lamportsPerSignature: ${lamportsPerSignature}`);
+        console.log(JSON.stringify(tokenFees.map(tokenFee => tokenFee.toSerializable())));
     });
 
 program
@@ -72,45 +77,19 @@ program
     )
     .addHelpText('beforeAll', 'Creates fee collection accounts for fees listed in config')
     .action(async ({ dryRun }) => {
-        const tokensWithAccountsToCreate = await Promise.all(
-            config.endpoints.transfer.tokens
-                .map(async tokenEntry => {
-                    // only not created already counts
-                    const accountInfo = await connection.getAccountInfo(new PublicKey(tokenEntry.account));
-                    if (accountInfo) {
-                        return null;
-                    }
-
-                    // it should be associated token address for the owner
-                    const associatedTokenAddress = await getAssociatedTokenAddress(
-                        new PublicKey(tokenEntry.mint),
-                        ENV_SECRET_KEYPAIR.publicKey
-                    );
-                    if (!(new PublicKey(tokenEntry.account).equals(associatedTokenAddress))) {
-                        return null;
-                    }
-                    return tokenEntry;
-                })
+        const createAccounts = await PayerUtils.buildCreateAccountListFromTokenFees(
+            connection,
+            ENV_SECRET_KEYPAIR.publicKey,
+            config.endpoints.transfer.tokens.map((tokenFee) => core.TokenFee.fromSerializable(tokenFee))
         );
 
-        console.log('tokens with accounts to create:', tokensWithAccountsToCreate);
+        console.log('accounts to create:', createAccounts);
 
         if (!dryRun) {
-            for (const tokenEntry of tokensWithAccountsToCreate) {
-                if (tokenEntry === null) {
-                    continue;
-                }
-                try {
-                    await createAssociatedTokenAccount(
-                        connection,
-                        ENV_SECRET_KEYPAIR,
-                        new PublicKey(tokenEntry.mint),
-                        ENV_SECRET_KEYPAIR.publicKey,
-                    );
-                } catch (e) {
-                    console.log(e);
-                    break;
-                }
+            const result = await PayerUtils.createAccounts(connection, ENV_SECRET_KEYPAIR, createAccounts);
+            const errors = result.filter(value => value.error !== null);
+            if (errors) {
+                console.log('create results with errors:', errors);
             }
         }
     });
@@ -128,57 +107,23 @@ program
         '100000000'
     )
     .action(async ({ dryRun, threshold }) => {
-        const accountStates = await Promise.all(config.endpoints.transfer.tokens.map(async tokenEntry => {
-            console.log(tokenEntry.account, await getAccount(connection, new PublicKey(tokenEntry.account)));
-            return {
-                account: tokenEntry.account,
-                mint: tokenEntry.mint,
-                amount: (await getAccount(connection, new PublicKey(tokenEntry.account))).amount,
-            }
-        }));
+        const routesToSwap = await PayerUtils.loadSwapRoutesForTokenFees(
+            connection,
+            config.endpoints.transfer.tokens.map(token => core.TokenFee.fromSerializable(token)),
+            parseInt(threshold),
+            0.5
+        );
 
-        for (const accountState of accountStates) {
-            if (accountState.amount === 0n) {
-                continue;
-            }
+        if (!routesToSwap) {
+            console.log('No tokens to swap');
+        }
 
-            const routes = (await axios.get('https://quote-api.jup.ag/v1/quote', {
-                params: {
-                    inputMint: accountState.mint,
-                    outputMint: 'So11111111111111111111111111111111111111112',
-                    amount: accountState.amount,
-                    slippage: 0.5,
-                }
-            })).data.data;
-            const route = routes[0];
+        console.log('Tokens to swap:', routesToSwap);
 
-            if (route.outAmount < threshold) {
-                console.log(`Skipping token ${accountState.mint}: not enough value to exchange.`);
-                continue;
-            }
-
-            console.log(`Selling token ${accountState.mint} for ${route.outAmount / LAMPORTS_PER_SOL} SOL`);
-
-            if (!dryRun) {
-                const transactions = (
-                    await axios.post('https://quote-api.jup.ag/v1/swap', {
-                        route,
-                        userPublicKey: ENV_SECRET_KEYPAIR.publicKey.toString(),
-                        wrapUnwrapSOL: true,
-                    },{
-                        headers: { 'Content-Type': 'application/json' }
-                    })
-                ).data;
-                const { setupTransaction, swapTransaction, cleanupTransaction } = transactions;
-
-                for (let serializedTransaction of [setupTransaction, swapTransaction, cleanupTransaction].filter(Boolean)) {
-                    const transaction = Transaction.from(Buffer.from(serializedTransaction, 'base64'));
-                    const txid = await connection.sendTransaction(transaction, [ENV_SECRET_KEYPAIR], {
-                        skipPreflight: true
-                    });
-                    await connection.confirmTransaction(txid);
-                    console.log(`https://solscan.io/tx/${txid}`);
-                }
+        if (!dryRun) {
+            for (const route of routesToSwap) {
+                const txids = await PayerUtils.executeSwapByRoute(connection, ENV_SECRET_KEYPAIR, route);
+                console.log(`Executed transactions:`, txids);
             }
         }
     });

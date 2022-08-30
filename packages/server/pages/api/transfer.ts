@@ -1,7 +1,7 @@
-import { PublicKey, Transaction } from '@solana/web3.js';
+import { Transaction } from '@solana/web3.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import base58 from 'bs58';
-import { signWithTokenFee } from '@solana/octane-core';
+import { signWithTokenFee, core } from '@solana/octane-core';
 import { cache, connection, ENV_SECRET_KEYPAIR, cors, rateLimit } from '../../src';
 import config from '../../../../config.json';
 
@@ -32,12 +32,7 @@ export default async function (request: NextApiRequest, response: NextApiRespons
             ENV_SECRET_KEYPAIR,
             config.maxSignatures,
             config.lamportsPerSignature,
-            config.endpoints.transfer.tokens.map((token) => ({
-                mint: new PublicKey(token.mint),
-                account: new PublicKey(token.account),
-                decimals: token.decimals,
-                fee: BigInt(token.fee),
-            })),
+            config.endpoints.transfer.tokens.map((token) => core.TokenFee.fromSerializable(token)),
             cache
         );
         // Respond with the confirmed transaction signature

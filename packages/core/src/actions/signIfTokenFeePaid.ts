@@ -1,7 +1,7 @@
 import { Transaction, Connection, Keypair } from '@solana/web3.js';
 import type { Cache } from 'cache-manager';
 import base58 from 'bs58';
-import { sha256, simulateRawTransaction, validateTransaction, validateTransfer, AllowedToken } from '../core';
+import { sha256, simulateRawTransaction, validateTransaction, validateTransfer, TokenFee } from '../core';
 
 /**
  * Sign transaction by fee payer if the first instruction is a transfer of token fee to given account
@@ -23,7 +23,7 @@ export async function signWithTokenFee(
     feePayer: Keypair,
     maxSignatures: number,
     lamportsPerSignature: number,
-    allowedTokens: AllowedToken[],
+    allowedTokens: TokenFee[],
     cache: Cache,
     sameSourceTimeout = 5000
 ): Promise<{ signature: string }> {
