@@ -1,9 +1,6 @@
 /*
-!api
-!build
+!packages
 !config.json
-!public
-!src
 !package.json
-!tsconfig.json
+!lerna.json
 !yarn.lock
