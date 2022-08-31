@@ -1,4 +1,4 @@
-# Set up Octane ⛽
+# Set up your own Octane node ⛽
 
 This guide assumes you have:
 
@@ -17,6 +17,8 @@ If you don't have any of these yet, get them first!
 Fork the project to create your own deployment of Octane.
 
 ![Github fork repo](setup/1_github_fork_repo.png)
+
+If you want to keep your fork private, follow [this guide](https://gist.github.com/0xjac/85097472043b697ab57ba1b1c7530274).
 
 ## 2. Clone your fork
 
