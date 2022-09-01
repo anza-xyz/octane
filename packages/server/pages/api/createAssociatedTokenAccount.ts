@@ -32,7 +32,7 @@ export default async function (request: NextApiRequest, response: NextApiRespons
             ENV_SECRET_KEYPAIR,
             config.maxSignatures,
             config.lamportsPerSignature,
-            config.endpoints.transfer.tokens.map((token) => ({
+            config.endpoints.createAssociatedTokenAccount.tokens.map((token) => ({
                 mint: new PublicKey(token.mint),
                 account: new PublicKey(token.account),
                 decimals: token.decimals,
