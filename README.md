@@ -87,7 +87,7 @@ Octane wants to be secure, well-tested, well-documented, and easy to use.
 
 1. If you are building a Solana wallet, you can use Octane to allow users to transfer SPL tokens without paying transaction fees in SOL. Additionally, Octane supports creating associated token accounts for transfers of tokens if the receiver doesn't have an associated token flow. You can use Octane transaction flow only for users, who don't have any SOL at the wallet.
 2. If you are building a Solana dapp, you can allow users to run your transactions within your dapp without spending SOL. For example, if you build an NFT marketplace, you can support NFT purchases using just USDC. Alternatively, you can airdrop your own token to users and accept payments for fees in it. As with wallets, you can enable Octane flow only for users who don't have any SOL on their account.
-
+3. If you are building an app or a suite of apps with your token, ... # todo
 ### Setting up your own node
 
 You can get started by following the steps in [SETUP](SETUP.md).
