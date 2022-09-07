@@ -1,4 +1,5 @@
 import { Command } from 'commander';
+import { PublicKey } from '@solana/web3.js';
 import {
     getMinimumBalanceForRentExemptAccount,
 } from '@solana/spl-token';
@@ -66,6 +67,48 @@ program
 
         console.log(`lamportsPerSignature: ${lamportsPerSignature}`);
         console.log(JSON.stringify(tokenFees.map(tokenFee => tokenFee.toSerializable())));
+    });
+
+program
+    .command('generate-config-for-token')
+    .argument('<mint>')
+    .option(
+        '-m, --margin <number>',
+        'Part of total user-paid fee that fee payers takes as a surplus to transaction costs. ' +
+        'From 0 to 1. For example, 0.5 would mean that user pays 2x the SOL signature fee and 0.9 would mean that user pays 10x the fee.',
+        '0.9'
+    )
+    .option(
+        '-a, --include-account-fees',
+        'Includes creating a associated token account in each fee. Use this flag when filling out the endpoints.createAccount part of config.',
+        ''
+    )
+    .action(async (mintAsString, {margin, includeAccountFees}) => {
+        const mint = new PublicKey(mintAsString);
+        const lamportsPerSignature = await PayerUtils.getLamportsPerSignature(connection);
+
+        let cost: number;
+        if (includeAccountFees) {
+            cost = lamportsPerSignature + await getMinimumBalanceForRentExemptAccount(connection);
+        } else {
+            cost = lamportsPerSignature;
+        }
+
+        const priceInfo = await PayerUtils.getTokenToNativePriceInfo(mint);
+        const pricingParams = {
+            costInLamports: cost,
+            margin: margin,
+        };
+
+        const tokenFee = (await PayerUtils.buildTokenFeeList(
+            connection,
+            ENV_SECRET_KEYPAIR.publicKey,
+            [{ mint, priceInfo }],
+            pricingParams,
+        ))[0];
+
+        console.log(`lamportsPerSignature: ${lamportsPerSignature}`);
+        console.log(JSON.stringify(tokenFee.toSerializable()));
     });
 
 program
