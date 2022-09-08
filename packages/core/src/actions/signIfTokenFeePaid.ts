@@ -15,10 +15,10 @@ import {
  *
  * @param connection           Connection to a Solana node
  * @param transaction          Transaction to sign
+ * @param feePayer             Keypair for fee payer
  * @param maxSignatures        Maximum allowed signatures in the transaction including fee payer's
  * @param lamportsPerSignature Maximum fee payment in lamports
  * @param allowedTokens        List of tokens that can be used with token fee receiver accounts and fee details
- * @param feePayer             Keypair for fee payer
  * @param cache                A cache to store duplicate transactions
  * @param sameSourceTimeout    An interval for transactions with same token fee source, ms
  *

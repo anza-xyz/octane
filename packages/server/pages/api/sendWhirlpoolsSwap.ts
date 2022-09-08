@@ -1,9 +1,8 @@
-import { PublicKey, sendAndConfirmRawTransaction, Transaction } from '@solana/web3.js';
+import { sendAndConfirmRawTransaction, Transaction } from '@solana/web3.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import base58 from 'bs58';
-import { signWithTokenFee } from '@solana/octane-core';
+import { signGeneratedTransaction, whirlpools } from '@solana/octane-core';
 import { cache, connection, ENV_SECRET_KEYPAIR, cors, rateLimit } from '../../src';
-import config from '../../../../config.json';
 
 // Endpoint to pay for transactions with an SPL token transfer
 export default async function (request: NextApiRequest, response: NextApiResponse) {
@@ -25,20 +24,20 @@ export default async function (request: NextApiRequest, response: NextApiRespons
         return;
     }
 
+    const messageToken = request.body?.messageToken;
+    if (typeof messageToken !== 'string') {
+        response.status(400).send({ status: 'error', message: 'messageToken should be passed' });
+        return;
+    }
+
     try {
-        const { signature } = await signWithTokenFee(
+        const { signature } = await signGeneratedTransaction(
             connection,
             transaction,
             ENV_SECRET_KEYPAIR,
-            config.maxSignatures,
-            config.lamportsPerSignature,
-            config.endpoints.transfer.tokens.map((token) => ({
-                mint: new PublicKey(token.mint),
-                account: new PublicKey(token.account),
-                decimals: token.decimals,
-                fee: BigInt(token.fee),
-            })),
-            cache
+            whirlpools.MESSAGE_TOKEN_KEY,
+            messageToken,
+            cache,
         );
 
         transaction.addSignature(

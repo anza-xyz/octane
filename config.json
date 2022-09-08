@@ -23,6 +23,16 @@
                     "fee": 10000000
                 }
             ]
+        },
+        "whirlpoolsSwap": {
+            "tokens": [
+                {
+                    "mint": "__PLACEHOLDER__",
+                    "account": "__PLACEHOLDER__",
+                    "decimals": 9,
+                    "fee": 10000000
+                }
+            ]
         }
     }
 }

@@ -14,7 +14,12 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "incremental": true,
-        "jsx": "preserve"
+        "jsx": "preserve",
+        "paths": {
+            "@solana/spl-token": [
+                "./node_modules/@solana/spl-token"
+            ],
+        }
     },
     "include": ["pages", "src"],
     "exclude": ["node_modules"]

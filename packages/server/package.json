@@ -18,6 +18,8 @@
         "nuke": "shx rm -rf node_modules yarn.lock"
     },
     "dependencies": {
+        "@solana/octane-core": "*",
+        "@solana/spl-token": "^0.2.0",
         "@solana/web3.js": "^1.48.0",
         "bs58": "^5.0.0",
         "cache-manager": "^4.1.0",
@@ -25,11 +27,11 @@
         "express": "^4.18.1",
         "express-rate-limit": "^6.4.0",
         "next": "^12.1.0",
-        "@solana/octane-core": "*",
         "react": "^17.0.2",
         "react-dom": "^17.0.2"
     },
     "devDependencies": {
+        "@next/eslint-plugin-next": "^12.2.3",
         "@types/bs58": "^4.0.1",
         "@types/cache-manager": "^3.4.2",
         "@types/cors": "^2.8.12",

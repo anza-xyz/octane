@@ -41,18 +41,16 @@ npm install
 From the command line, run this command:
 
 ```shell
-cp .env.example .env
+cp packages/server/.env.example packages/server/.env
 ```
 
-In your editor, open the `.env` file.
+In your editor, open the `packages/server/.env` file.
 
 ![Edit .env file](setup/3_edit_env_file.png)
 
 The values containing `__PLACEHOLDER__` need to be changed.
 
 - `SECRET_KEY` is the base58 encoded secret key that Octane will sign transactions with.
-- `TRANSFER_MINT` is the base58 encoded public key of an SPL token mint.
-- `TRANSFER_ACCOUNT` is the base58 encoded public key of an SPL token account corresponding to this mint.
 
 Let's start by creating a keypair and minting a token to test with.
 
@@ -69,6 +67,13 @@ The last command will silently copy the base58 encoded secret key to your clipbo
 
 Update the value of `SECRET_KEY` in your .env file with it, and save the file.
 
+Now, open the `config.json` file.
+
+These `__PLACEHOLDER__` values must also change.
+
+- `mint` is the base58 encoded public key of an SPL token mint.
+- `account` is the base58 encoded public key of an SPL token account corresponding to this mint.
+
 From the command line, run these commands:
 ```shell
 solana airdrop 1
@@ -81,7 +86,7 @@ After the last command, you should see:
 Creating token <base58 encoded TRANSFER_MINT public key>
 ```
 
-Copy this **TRANSFER_MINT** public key, update the value of `TRANSFER_MINT` in your .env file with it, and save the file.
+Copy this **TRANSFER_MINT** public key, update the value of `TRANSFER_MINT` in your `config.json` file with it, and save the file.
 
 From the command line, run these commands:
 ```shell
@@ -99,7 +104,9 @@ Minting 100 tokens
   Recipient: <base58 encoded TRANSFER_ACCOUNT public key>
 ```
 
-Copy this **TRANSFER_ACCOUNT** public key, update the value of `TRANSFER_ACCOUNT` in your .env file with it, and save the file.
+Copy this **TRANSFER_ACCOUNT** public key, update the value of `TRANSFER_ACCOUNT` in your `config.json` file with it, and save the file.
+
+Now, commit and push your changes to the fork.
 
 You're ready to deploy Octane.
 
@@ -126,6 +133,12 @@ Click the **Import** button:
 You should see:
 
 ![Vercel configure project](setup/6_vercel_configure_project.png)
+
+Edit the **Root Directory** section to `./packages/server`
+
+Expand the *Build and Output Settings* section.
+
+Under **Build Command**, toggle the slider for **Override** and put `cd ../.. && yarn build`.
 
 Expand the **Environment Variables** section.
 
