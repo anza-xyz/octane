@@ -10,6 +10,8 @@
 
 Octane is a gasless transaction relayer for Solana. Octane accepts transactions via an HTTP API, signs them if they satisfy certain conditions and broadcasts to the network.
 
+It's designed for anyone to be able to run for free on Vercel as a collection of serverless Node.js API functions.
+
 Transaction fees on Solana are very inexpensive, but users still need SOL to pay for them, and they often don't know (or forget) this.
 
 Sometimes a good friend (like you!) introduces them to Solana, and explaining that you need to get SOL first to do anything is tricky.
@@ -18,7 +20,7 @@ Sometimes users stake all their SOL or swap it for tokens or mint an NFT and don
 
 Sometimes a merchant or dApp would like to pay for certain transactions on behalf of their users.
 
-Octane is designed for anyone to be able to run for free on Vercel as a collection of serverless Node.js API functions.
+Octane exists to solve these scenarios.
 
 ![Overview of Octane architecture](overview.png)
 
@@ -52,17 +54,19 @@ It uses ratelimiting, transaction validation, and transaction simulation to miti
 
 However, there are some risks associated with running an Octane node:
 
-1) SPL-to-SOL token spread. Octane is configured to accept specific amounts of SPL tokens for paying fixed transaction fees in SOL. Since the token price relative to SOL can change, Octane could end up in a state where it loses money on every transaction.
+1) Token-to-SOL price spread. Octane is configured to accept specific amounts of SPL tokens for paying fixed transaction fees in SOL. Since the token price relative to SOL can change, Octane could end up in a state where it loses money on every transaction.
 2) Draining possibilities due to Octane software bugs. Octane signs user-generated transactions with fee payer's keypair after confirming a transaction transfers fee and does not try to modify fee payer's accounts.  However, if implemented checks are insufficient due to a bug, an attacker could run transaction without paying the fee or modify fee payer's accounts.
 
 Follow these recommendations to minimize risks:
-1. Run Octane on a new separate keypair, not used in governance or within contracts as authority.
+1. Run Octane on a new separate keypair, not used in governance or within contracts as an authority.
 2. Set SPL token price for transactions with a premium relative to their real cost in SOL.
 3. Don't hold more SOL on the keypair than needed for 3-4 hours of spending on transaction fees for your load expectations. It could be as low as 0.2-1 SOL.
 4. Every hour automatically received swap tokens to SOL (Octane provides a CLI for that).
 5. Regularly check that prices and liquidity of SPL tokens allow your profitably pay for transaction fees in SOL.
 6. If your Octane node makes profit, regularly withdraw that profit to another keypair.
-7. When implementing in your backend, make sure to: X
+7. When using Octane as a library in your backend, make sure to:
+   1. Never return fee payer's signature of an unconfirmed transaction to a user. You must submit transaction to the network from the backend.
+   2. Implement duplicated transaction checks, limits per user and general rate limits
 
 ## What does Octane want?
 
@@ -82,26 +86,35 @@ Octane wants to be secure, well-tested, well-documented, and easy to use.
 
 1. You can use Octane as a server application to deploy on a platform like Render or Vercel.
 2. You can use someone else's node. This way you don't have to support your own server and manage funds on fee payer account. However, you'll be limited by SPL tokens they offer at their price per signature.
-3. You can integrate Octane into your backend by using it as a Typescript library.
+3. You can integrate Octane into your backend by using it as a Node.js library.
 
 ### Common integration scenarios
 
-1. If you are building a Solana wallet, you can use Octane to allow users to transfer SPL tokens without paying transaction fees in SOL. Additionally, Octane supports creating associated token accounts for transfers of tokens if the receiver doesn't have an associated token flow. You can use Octane transaction flow only for users, who don't have any SOL at the wallet.
-2. If you are building a Solana dapp, you can allow users to run your transactions within your dapp without spending SOL. For example, if you build an NFT marketplace, you can support NFT purchases using just USDC. Alternatively, you can airdrop your own token to users and accept payments for fees in it. As with wallets, you can enable Octane flow only for users who don't have any SOL on their account.
-3. If you are building an app or a suite of apps with your token, ... # todo
+1. **For wallets**: let your users pay transaction fees and associated account initialization fees with liquid SPL tokens.
+2. **For wallets**: let your users convert liquid SPL tokens to SOL without paying any fees in SOL.
+3. **For wallets and dapps**: convert tokens to SOL when a user doesn't have enough SOL to execute a transaction.
+4. **For dapps and ecosystems**: fully sponsor transactions for authorized users.
+5. **For dapps with tokens**: let your users pay transaction fees in your token.
+
 ### Setting up your own node
 
-You can get started by following the steps in [SETUP](SETUP.md).
+You can get started by following the steps in [SETUP](SETUP.md). You'll need to support a fee payer account and manage prices in `config.json`
 
 ### Using Octane from a client app
 
-If you already have set up an Octane node, or you are using a public endpoint from someone else, it's the time to integrate the node with your client code.
+If you already have set up an Octane node, or you are using a public endpoint from someone else, it's the time to integrate the node with your client code. Follow [this guide](docs/example-integration.md) to run your first transaction through Octane.
 
-### Integrate as a Typescript library
+### Integrate it as a Node.js library
+
+If you would like to Octane as part of your backend, learn about installation and available methods in [this guide](docs/reference.md).
 
 ### Managing fee payer account
 
+If you host your own Octane node, you'll need to manage fee payer account. Octane provides a handy CLI for that: it allows to swap tokens to SOL, create accounts and generate config. Go through [this guide](docs/CLI.md) to learn more.
+
 ## Is there an example app that uses Octane?
+
+[octane-demo](https://github.com/sevazhidkov/octane-demo) is an open source app that showcases various types of gasless transactions using Octane.
 
 ## How is the code structured?
 
