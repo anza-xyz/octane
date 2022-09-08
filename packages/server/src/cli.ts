@@ -141,7 +141,7 @@ program
     .command('swap-tokens-to-sol')
     .option(
         '-d, --dry-run',
-        'Outputs accounts to be created',
+        'Outputs swap transactions to be executed',
         ''
     )
     .option(
