@@ -1,4 +1,4 @@
-import { Transaction } from '@solana/web3.js';
+import { PublicKey, sendAndConfirmRawTransaction, Transaction } from '@solana/web3.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import base58 from 'bs58';
 import { signWithTokenFee, core } from '@solana/octane-core';
@@ -35,6 +35,18 @@ export default async function (request: NextApiRequest, response: NextApiRespons
             config.endpoints.transfer.tokens.map((token) => core.TokenFee.fromSerializable(token)),
             cache
         );
+
+        transaction.addSignature(
+            ENV_SECRET_KEYPAIR.publicKey,
+            Buffer.from(base58.decode(signature))
+        );
+
+        await sendAndConfirmRawTransaction(
+            connection,
+            transaction.serialize(),
+            {commitment: 'confirmed'}
+        );
+
         // Respond with the confirmed transaction signature
         response.status(200).send({ status: 'ok', signature });
     } catch (error) {
