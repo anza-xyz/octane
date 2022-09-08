@@ -102,11 +102,7 @@ You can get started by following the steps in [SETUP](SETUP.md). You'll need to 
 
 ### Using Octane from a client app
 
-If you already have set up an Octane node, or you are using a public endpoint from someone else, it's the time to integrate the node with your client code. Follow [this guide](docs/example-integration.md) to run your first transaction through Octane.
-
-### Integrate it as a Node.js library
-
-If you would like to Octane as part of your backend, learn about installation and available methods in [this guide](docs/reference.md).
+If you already have set up an Octane node, or you are using a public endpoint from someone else, it's the time to integrate the node with your client code. Follow [this guide](docs/example-integration.md) to run your first transaction through Octane. You can also view all Octane endpoints and their parameters on [this page](docs/endpoints.md).
 
 ### Managing fee payer account
 
