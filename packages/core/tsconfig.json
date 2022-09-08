@@ -15,7 +15,12 @@
         "isolatedModules": true,
         "baseUrl": "./src",
         "noFallthroughCasesInSwitch": true,
-        "noImplicitReturns": true
+        "noImplicitReturns": true,
+        "paths": {
+            "@solana/spl-token": [
+                "../node_modules/@solana/spl-token"
+            ],
+        }
     },
     "include": ["./src/**/*"]
 }
