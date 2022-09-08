@@ -7,7 +7,7 @@ import { PublicKey } from '@solana/web3.js';
 import { getAssociatedTokenAddress } from '@solana/spl-token';
 import { Percentage } from '@orca-so/common-sdk';
 
-import { buildWhirlpoolsSwapToSOL } from '@solana/octane-core';
+import { buildWhirlpoolsSwapToSOL, core } from '@solana/octane-core';
 import { cache, connection, ENV_SECRET_KEYPAIR, cors, rateLimit } from '../../src';
 import config from '../../../../config.json';
 
@@ -49,12 +49,7 @@ export default async function (request: NextApiRequest, response: NextApiRespons
     }
 
     const tokenFees = (
-        config.endpoints.whirlpoolsSwap.tokens
-        .map((tokenFee) => ({
-            ...tokenFee,
-            mint: new PublicKey(tokenFee.mint),
-            account: new PublicKey(tokenFee.account),
-        }))
+        config.endpoints.whirlpoolsSwap.tokens.map((token) => core.TokenFee.fromSerializable(token))
         .filter((tokenFee) => tokenFee.mint.equals(sourceMint))
     );
     if (tokenFees.length === 0) {
@@ -74,7 +69,7 @@ export default async function (request: NextApiRequest, response: NextApiRespons
             cache,
             3000,
             {
-                amount: tokenFee.fee,
+                amount: Number(tokenFee.fee),
                 sourceAccount: await getAssociatedTokenAddress(sourceMint, user),
                 destinationAccount: tokenFee.account
             }

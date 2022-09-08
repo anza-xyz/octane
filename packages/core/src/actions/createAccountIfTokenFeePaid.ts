@@ -1,6 +1,6 @@
 import { Connection, Keypair, Transaction } from '@solana/web3.js';
 import {
-    AllowedToken,
+    TokenFee,
     sha256,
     simulateRawTransaction,
     validateAccountInitializationInstructions,
@@ -31,7 +31,7 @@ export async function createAccountIfTokenFeePaid(
     feePayer: Keypair,
     maxSignatures: number,
     lamportsPerSignature: number,
-    allowedTokens: AllowedToken[],
+    allowedTokens: TokenFee[],
     cache: Cache,
     sameSourceTimeout = 5000
 ) {

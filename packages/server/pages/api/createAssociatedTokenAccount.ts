@@ -1,9 +1,9 @@
-import { PublicKey, sendAndConfirmRawTransaction, Transaction } from '@solana/web3.js';
+import { sendAndConfirmRawTransaction, Transaction } from '@solana/web3.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import base58 from 'bs58';
 import { ENV_SECRET_KEYPAIR, cors, rateLimit, connection, cache } from '../../src';
 import config from '../../../../config.json';
-import { createAccountIfTokenFeePaid } from '@solana/octane-core';
+import { core, createAccountIfTokenFeePaid } from '@solana/octane-core';
 
 // Endpoint to create associated token account with transaction fees and account initialization fees paid by SPL tokens
 export default async function (request: NextApiRequest, response: NextApiResponse) {
@@ -32,12 +32,7 @@ export default async function (request: NextApiRequest, response: NextApiRespons
             ENV_SECRET_KEYPAIR,
             config.maxSignatures,
             config.lamportsPerSignature,
-            config.endpoints.createAssociatedTokenAccount.tokens.map((token) => ({
-                mint: new PublicKey(token.mint),
-                account: new PublicKey(token.account),
-                decimals: token.decimals,
-                fee: BigInt(token.fee),
-            })),
+            config.endpoints.createAssociatedTokenAccount.tokens.map((token) => core.TokenFee.fromSerializable(token)),
             cache
         );
 
