@@ -62,6 +62,7 @@ Follow these recommendations to minimize risks:
 4. Every hour automatically received swap tokens to SOL (Octane provides a CLI for that).
 5. Regularly check that prices and liquidity of SPL tokens allow your profitably pay for transaction fees in SOL.
 6. If your Octane node makes profit, regularly withdraw that profit to another keypair.
+7. When implementing in your backend, make sure to: X
 
 ## What does Octane want?
 
