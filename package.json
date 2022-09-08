@@ -10,7 +10,8 @@
         "test:live": "lerna run test:live",
         "test:live-with-test-validator": "lerna run test:live-with-test-validator",
         "lint": "lerna run --stream --no-bail lint",
-        "lint:fix": "lerna run --stream --no-bail lint:fix"
+        "lint:fix": "lerna run --stream --no-bail lint:fix",
+        "cli": "lerna run --stream cli --scope @solana/octane-server --no-prefix -- --"
     },
     "devDependencies": {
         "lerna": "^5.4.0",

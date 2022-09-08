@@ -6,7 +6,7 @@ import {
     simulateRawTransaction,
     validateTransaction,
     validateTransfer,
-    AllowedToken,
+    TokenFee,
     validateInstructions,
 } from '../core';
 
@@ -30,7 +30,7 @@ export async function signWithTokenFee(
     feePayer: Keypair,
     maxSignatures: number,
     lamportsPerSignature: number,
-    allowedTokens: AllowedToken[],
+    allowedTokens: TokenFee[],
     cache: Cache,
     sameSourceTimeout = 5000
 ): Promise<{ signature: string }> {

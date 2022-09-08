@@ -29,7 +29,8 @@
         "@solana/web3.js": "^1.34.0",
         "bs58": "^4.0.1",
         "cache-manager": "^3.6.0",
-        "encoding": "^0.1.13"
+        "encoding": "^0.1.13",
+        "axios": "^0.27.2"
     },
     "devDependencies": {
         "@types/bn.js": "^5.1.0",

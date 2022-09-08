@@ -6,20 +6,14 @@ import {
     isTransferCheckedInstruction,
     isTransferInstruction,
 } from '@solana/spl-token';
-import { Connection, PublicKey, Transaction } from '@solana/web3.js';
-
-export type AllowedToken = {
-    mint: PublicKey;
-    account: PublicKey;
-    decimals: number; // Token account to receive fee payments
-    fee: bigint;
-};
+import { Connection, Transaction } from '@solana/web3.js';
+import { TokenFee } from './tokenFee';
 
 // Check that a transaction contains a valid transfer to Octane's token account
 export async function validateTransfer(
     connection: Connection,
     transaction: Transaction,
-    allowedTokens: AllowedToken[]
+    allowedTokens: TokenFee[]
 ): Promise<DecodedTransferInstruction | DecodedTransferCheckedInstruction> {
     // Get the first instruction of the transaction
     const [first] = transaction.instructions;

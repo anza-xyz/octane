@@ -17,7 +17,7 @@ import {
     createAssociatedTokenAccountInstruction,
 } from '@solana/spl-token';
 import { createAccountIfTokenFeePaid } from '../../src';
-import { AllowedToken } from '../../src/core';
+import { TokenFee } from '../../src/core';
 import { airdropLamports } from '../common';
 
 use(chaiAsPromised);
@@ -29,7 +29,7 @@ if (process.env.TEST_LIVE) {
         let tokenKeypair: Keypair; // Token owner
         let mint: PublicKey;
         let feePayerTokenAccount: Account; // Account for fees in tokens
-        let baseAllowedTokens: AllowedToken[];
+        let baseAllowedTokens: TokenFee[];
         let cache: cacheManager.Cache;
         before(async () => {
             cache = cacheManager.caching({ store: MemoryStore, max: 1000, ttl: 120 });
@@ -45,12 +45,7 @@ if (process.env.TEST_LIVE) {
                 feePayerKeypair.publicKey
             );
             baseAllowedTokens = [
-                {
-                    mint: mint,
-                    account: feePayerTokenAccount.address,
-                    decimals: 9,
-                    fee: BigInt(100),
-                },
+                new TokenFee(mint, feePayerTokenAccount.address, 9, BigInt(100)),
             ];
         });
 
