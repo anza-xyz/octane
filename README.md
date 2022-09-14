@@ -52,17 +52,13 @@ You can get started by following the steps in [SETUP](SETUP.md). You'll need to 
 
 If you already have set up an Octane node, or you are using a public endpoint from someone else, it's the time to integrate the node with your client code. Follow [this guide](docs/example-integration.md) to run your first transaction through Octane. You can also view all Octane endpoints and their parameters on [this page](docs/endpoints.md).
 
+### Integrate it as a Node.js library
+
+If you would like to Octane as part of your backend, learn about installation and available methods in [this guide](docs/library.md).
+
 ### Managing fee payer account
 
 If you host your own Octane node, you'll need to manage fee payer account. Octane provides a handy CLI for that: it allows to swap tokens to SOL, create accounts and generate config. Go through [this guide](docs/CLI.md) to learn more.
-
-### Common integration scenarios
-
-1. **For wallets**: let your users pay transaction fees and associated account initialization fees with liquid SPL tokens.
-2. **For wallets**: let your users convert liquid SPL tokens to SOL without paying any fees in SOL.
-3. **For wallets and dapps**: convert tokens to SOL when a user doesn't have enough SOL to execute a transaction.
-4. **For dapps and ecosystems**: fully sponsor transactions for authorized users.
-5. **For dapps with tokens**: let your users pay transaction fees in your token.
 
 ### Example app
 
@@ -71,6 +67,14 @@ If you host your own Octane node, you'll need to manage fee payer account. Octan
 * transaction sponsorship for authorized users, including limits and usage of octane-core
 * gasless swaps from tokens to SOL
 * just-in-time swaps to run Metaplex NFT mints and Anchor programs
+
+### Common integration scenarios
+
+1. **For wallets**: let your users pay transaction fees and associated account initialization fees with liquid SPL tokens.
+2. **For wallets**: let your users convert liquid SPL tokens to SOL without paying any fees in SOL.
+3. **For wallets and dapps**: convert tokens to SOL when a user doesn't have enough SOL to execute a transaction.
+4. **For dapps and ecosystems**: fully sponsor transactions for authorized users.
+5. **For dapps with tokens**: let your users pay transaction fees in your token.
 
 ## Security
 
