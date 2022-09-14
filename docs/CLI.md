@@ -24,7 +24,7 @@ Endpoints like `transfer` and `buildWhirlpoolSwap` require less SOL, so margins 
                 // [ Result #1, yarn run cli generate-config-with-popular-tokens ]
             ]
         },
-        "buildWhirlpoolSwap": {
+        "whirlpoolSwap": {
             "tokens": [
                 // [ Result #2, yarn run cli generate-config-with-popular-tokens --n 5 ]
             ]
