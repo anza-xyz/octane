@@ -44,6 +44,8 @@ When the transaction is confirmed, Octane will have been paid a fee in the token
 2. You can use someone else's node. This way you don't have to support your own server and manage funds on fee payer account. However, you'll be limited by SPL tokens they offer at their price per signature.
 3. You can integrate Octane into your backend by using it as a Node.js library.
 
+Get an overview of Octane's use cases and how to implement them in [Recipes](docs/recipes.md).
+
 ### Setting up your own node
 
 You can get started by following the steps in [SETUP](SETUP.md). You'll need to support a fee payer account and manage prices in `config.json`
@@ -75,6 +77,8 @@ If you host your own Octane node, you'll need to manage fee payer account. Octan
 3. **For wallets and dapps**: convert tokens to SOL when a user doesn't have enough SOL to execute a transaction.
 4. **For dapps and ecosystems**: fully sponsor transactions for authorized users.
 5. **For dapps with tokens**: let your users pay transaction fees in your token.
+
+Learn more about these use cases in [Recipes](docs/recipes.md).
 
 ## Security
 
