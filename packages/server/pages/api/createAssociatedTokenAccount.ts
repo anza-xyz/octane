@@ -1,7 +1,15 @@
 import { sendAndConfirmRawTransaction, Transaction } from '@solana/web3.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import base58 from 'bs58';
-import { ENV_SECRET_KEYPAIR, cors, rateLimit, connection, cache } from '../../src';
+import {
+    ENV_SECRET_KEYPAIR,
+    cors,
+    rateLimit,
+    connection,
+    cache,
+    isReturnedSignatureAllowed,
+    ReturnSignatureConfigField,
+} from '../../src';
 import config from '../../../../config.json';
 import { core, createAccountIfTokenFeePaid } from '@solana/octane-core';
 
@@ -35,6 +43,18 @@ export default async function (request: NextApiRequest, response: NextApiRespons
             config.endpoints.createAssociatedTokenAccount.tokens.map((token) => core.TokenFee.fromSerializable(token)),
             cache
         );
+
+        if (config.returnSignature !== undefined) {
+            if (!await isReturnedSignatureAllowed(
+                request,
+                config.returnSignature as ReturnSignatureConfigField
+            )) {
+                response.status(400).send({ status: 'error', message: 'anti-spam check failed' });
+                return;
+            }
+            response.status(200).send({ status: 'ok', signature });
+            return;
+        }
 
         transaction.addSignature(
             ENV_SECRET_KEYPAIR.publicKey,
