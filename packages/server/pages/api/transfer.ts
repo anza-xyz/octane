@@ -2,7 +2,15 @@ import { PublicKey, sendAndConfirmRawTransaction, Transaction } from '@solana/we
 import type { NextApiRequest, NextApiResponse } from 'next';
 import base58 from 'bs58';
 import { signWithTokenFee, core } from '@solana/octane-core';
-import { cache, connection, ENV_SECRET_KEYPAIR, cors, rateLimit } from '../../src';
+import {
+    cache,
+    connection,
+    ENV_SECRET_KEYPAIR,
+    cors,
+    rateLimit,
+    isReturnedSignatureAllowed,
+    ReturnSignatureConfigField,
+} from '../../src';
 import config from '../../../../config.json';
 
 // Endpoint to pay for transactions with an SPL token transfer
@@ -35,6 +43,18 @@ export default async function (request: NextApiRequest, response: NextApiRespons
             config.endpoints.transfer.tokens.map((token) => core.TokenFee.fromSerializable(token)),
             cache
         );
+
+        if (config.returnSignature !== undefined) {
+            if (!await isReturnedSignatureAllowed(
+                request,
+                config.returnSignature as ReturnSignatureConfigField
+            )) {
+                response.status(400).send({ status: 'error', message: 'anti-spam check failed' });
+                return;
+            }
+            response.status(200).send({ status: 'ok', signature });
+            return;
+        }
 
         transaction.addSignature(
             ENV_SECRET_KEYPAIR.publicKey,

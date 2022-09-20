@@ -8,7 +8,15 @@ import { getAssociatedTokenAddress } from '@solana/spl-token';
 import { Percentage } from '@orca-so/common-sdk';
 
 import { buildWhirlpoolsSwapToSOL, core } from '@solana/octane-core';
-import { cache, connection, ENV_SECRET_KEYPAIR, cors, rateLimit } from '../../src';
+import {
+    cache,
+    connection,
+    ENV_SECRET_KEYPAIR,
+    cors,
+    rateLimit,
+    isReturnedSignatureAllowed,
+    ReturnSignatureConfigField,
+} from '../../src';
 import config from '../../../../config.json';
 
 // Endpoint to pay for transactions with an SPL token transfer
@@ -74,6 +82,25 @@ export default async function (request: NextApiRequest, response: NextApiRespons
                 destinationAccount: tokenFee.account
             }
         );
+
+        if (config.returnSignature !== undefined) {
+            if (!await isReturnedSignatureAllowed(
+                request,
+                config.returnSignature as ReturnSignatureConfigField
+            )) {
+                response.status(400).send({ status: 'error', message: 'anti-spam check failed' });
+                return;
+            }
+            transaction.sign(ENV_SECRET_KEYPAIR);
+            response.status(200).send({
+                status: 'ok',
+                transaction: base58.encode(transaction.serialize({verifySignatures: false})),
+                quote,
+                messageToken
+            });
+            return;
+        }
+
         // Respond with the confirmed transaction signature
         response.status(200).send({
             status: 'ok',
