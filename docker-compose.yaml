@@ -1,0 +1,35 @@
+# Docker-compose version
+version: "3"
+
+# Define the services/containers to be run
+services:
+  # Backend
+  backend:
+    # directory of Dockerfile
+    build: .
+    ports:
+      - "3000:3000"
+    # Do not forget to remove SECRET before committing this file.
+    container_name: octane_backend_1
+    restart: always
+    networks:
+      - backend_network
+    env_file:
+      - .env
+
+  # Proxy server
+  nginx:
+    build: ./nginx-docker
+    ports:
+      - "8080:8080"
+      - "443:443"
+      - "80:80"
+    container_name: octane_nginx_1
+    depends_on:
+      - backend
+    networks:
+      - backend_network
+
+networks:
+  backend_network:
+
