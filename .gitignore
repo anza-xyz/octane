@@ -2,6 +2,7 @@
 
 .idea
 .vercel
+.env
 
 keys
 
