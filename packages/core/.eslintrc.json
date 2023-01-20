@@ -9,6 +9,7 @@
     "plugins": ["@typescript-eslint", "prettier"],
     "rules": {
         "@typescript-eslint/ban-ts-comment": "off",
+    	"@typescript-eslint/quotes": ["error", "backtick", { "avoidEscape": true }],
 	"quoteStyle": "single"
     }
 }
