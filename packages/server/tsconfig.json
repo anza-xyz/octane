@@ -1,27 +1,33 @@
 {
     "compilerOptions": {
-        "target": "esnext",
-        "module": "esnext",
+        "target": "es2020",
+        "module": "es6",
+        "skipLibCheck": false,
+        "allowUnusedLabels": true,
         "moduleResolution": "node",
-        "noEmit": true,
-        "strict": true,
+        "allowSyntheticDefaultImports": true,
+        "module": "commonjs",
         "esModuleInterop": true,
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "typeRoots": ["node_modules/@types", "types"],
-        "lib": ["dom", "dom.iterable", "esnext"],
-        "allowJs": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "incremental": true,
-        "jsx": "preserve",
-        "paths": {
+        "strict": false,
+        "baseUrl": "./src",
+	"lib": ["dom","dom.iterable","esnext"],
+	"allowJs": true,
+	"forceConsistentCasingInFileNames": true,
+	"noEmit": true,
+	"incremental": true,
+	"resolveJsonModule": true,
+	"isolatedModules": true,
+	"jsx": "preserve",
+	"paths": {
             "@solana/spl-token": [
                 "./node_modules/@solana/spl-token"
+            ],
+            "@solana/octane-core": [
+                "../core/src/core"
             ],
         }
     },
     "include": ["pages", "src"],
     "exclude": ["node_modules"],
-    "typescript.preferences.quoteStyle": "single"
+    "quoteStyle": "single"
 }
