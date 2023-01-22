@@ -1,20 +1,14 @@
 {
     "compilerOptions": {
         "target": "es2020",
-        "module": "es6",
-        "skipLibCheck": false,
+        "module": "es2020",
+        "skipLibCheck": true,
         "allowUnusedLabels": true,
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
         "module": "commonjs",
         "esModuleInterop": true,
         "strict": false,
-        "baseUrl": "./src",
-	"lib": ["dom","dom.iterable","esnext"],
-	"allowJs": true,
-	"forceConsistentCasingInFileNames": true,
-	"noEmit": true,
-	"incremental": true,
 	"resolveJsonModule": true,
 	"isolatedModules": true,
 	"jsx": "preserve",
@@ -23,7 +17,7 @@
                 "./node_modules/@solana/spl-token"
             ],
             "@solana/octane-core": [
-                "../core/src/core"
+                "/root/octane/packages/core"
             ],
         }
     },
@@ -31,3 +25,4 @@
     "exclude": ["node_modules"],
     "quoteStyle": "single"
 }
+

@@ -3,6 +3,7 @@
     "maxSignatures": 2,
     "lamportsPerSignature": 5000,
     "corsOrigin": true,
+    "returnSignature": null,
     "endpoints": {
         "transfer": {
             "tokens": [
@@ -23,6 +24,16 @@
                     "fee": 10000000
                 }
             ]
-        }
+        },
+	"whirlpoolsSwap": {
+            "tokens": [
+		{
+		    "mint": "__PLACEHOLDER_FOR_WHIRLPOOL_SWAP__",
+		    "account": "__PLACEHOLDER_FOR_WHIRLPOOL_SWAP__",
+		    "decimals": 9,
+		    "fee": 10000000
+		}
+            ]
+	}
     }
 }
