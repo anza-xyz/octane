@@ -37,19 +37,12 @@ export default async function (request: NextApiRequest, response: NextApiRespons
             ENV_SECRET_KEYPAIR,
             whirlpools.MESSAGE_TOKEN_KEY,
             messageToken,
-            cache,
+            cache
         );
 
-        transaction.addSignature(
-            ENV_SECRET_KEYPAIR.publicKey,
-            Buffer.from(base58.decode(signature))
-        );
+        transaction.addSignature(ENV_SECRET_KEYPAIR.publicKey, Buffer.from(base58.decode(signature)));
 
-        await sendAndConfirmRawTransaction(
-            connection,
-            transaction.serialize(),
-            {commitment: 'confirmed'}
-        );
+        await sendAndConfirmRawTransaction(connection, transaction.serialize(), { commitment: 'confirmed' });
 
         // Respond with the confirmed transaction signature
         response.status(200).send({ status: 'ok', signature });

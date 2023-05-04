@@ -53,7 +53,7 @@ export async function validateTransfer(
 
     // Check that the owner of the source account is valid and has signed
     if (!owner.pubkey.equals(transaction.signatures[1].publicKey)) throw new Error('owner missing signature');
-    if (owner.isWritable) throw new Error('owner is writable');
+    // if (owner.isWritable) throw new Error('owner is writable'); // owner could need to be writable for other instructions
     if (!owner.isSigner) throw new Error('owner not signer');
 
     // If the instruction is a `TransferChecked` instruction, check that the mint and decimals are valid

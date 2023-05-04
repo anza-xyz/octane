@@ -4,11 +4,11 @@ export function areInstructionsEqual(instruction1: TransactionInstruction, instr
     return (
         instruction1.data.equals(instruction2.data) &&
         instruction1.programId.equals(instruction2.programId) &&
-        instruction1.keys.every(
-            (key1, i) =>
-                key1.pubkey.equals(instruction2.keys[i].pubkey) &&
-                key1.isWritable === instruction2.keys[i].isWritable &&
-                key1.isSigner === instruction2.keys[i].isSigner
+        instruction2.keys.every(
+            (key2, i) =>
+                key2.pubkey.equals(instruction1.keys[i].pubkey) &&
+                key2.isWritable === instruction1.keys[i].isWritable &&
+                key2.isSigner === instruction1.keys[i].isSigner
         )
     );
 }

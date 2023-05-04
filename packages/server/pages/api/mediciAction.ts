@@ -1,19 +1,19 @@
-import { sendAndConfirmRawTransaction, Transaction } from '@solana/web3.js';
+import { PublicKey, sendAndConfirmRawTransaction, Transaction } from '@solana/web3.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import base58 from 'bs58';
-import { signWithTokenFee, core } from '@solana/octane-core';
 import {
-    cache,
-    connection,
     ENV_SECRET_KEYPAIR,
     cors,
     rateLimit,
+    connection,
+    cache,
     isReturnedSignatureAllowed,
     ReturnSignatureConfigField,
 } from '../../src';
 import config from '../../../../config.json';
+import { core, mediciActionIfTokenFeePaid } from '@solana/octane-core';
 
-// Endpoint to pay for transactions with an SPL token transfer
+// Endpoint to perform a medici loan action with transaction fees and account initialization fees paid by SPL tokens
 export default async function (request: NextApiRequest, response: NextApiResponse) {
     await cors(request, response);
     await rateLimit(request, response);
@@ -34,13 +34,16 @@ export default async function (request: NextApiRequest, response: NextApiRespons
     }
 
     try {
-        const { signature } = await signWithTokenFee(
+        const medici_program_id = new PublicKey(config.mediciProgramId);
+
+        const { signature } = await mediciActionIfTokenFeePaid(
             connection,
             transaction,
             ENV_SECRET_KEYPAIR,
             config.maxSignatures,
             config.lamportsPerSignature,
-            config.endpoints.transfer.tokens.map((token) => core.TokenFee.fromSerializable(token)),
+            config.endpoints.mediciAction.tokens.map((token) => core.TokenFee.fromSerializable(token)),
+            medici_program_id,
             cache
         );
 

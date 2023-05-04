@@ -14,13 +14,7 @@ export async function validateAccountInitializationInstructions(
     cache: Cache
 ): Promise<void> {
     const transaction = Transaction.from(originalTransaction.serialize({ requireAllSignatures: false }));
-
-    // Transaction instructions should be: [fee transfer, account initialization]
-    // The fee transfer is validated with validateTransfer in the action function.
-    if (transaction.instructions.length != 2) {
-        throw new Error('transaction should contain 2 instructions: fee payment, account init');
-    }
-    const [, instruction] = transaction.instructions;
+    const instruction = transaction.instructions[1];
 
     if (!instruction.programId.equals(ASSOCIATED_TOKEN_PROGRAM_ID)) {
         throw new Error('account instruction should call associated token program');
