@@ -15,11 +15,8 @@ Octane wallet for SOL.
 The tokens must be listed on the "transfer" endpoint on Octane's `config.json`,
 otherwise it won't work.
 
-The endpoint is protected by and API key read from the `API_KEY` environment
+<!-- The endpoint is protected by and API key read from the `API_KEY` environment
 variable, that should be set to a random string. The field `apiKey` on the POST
-request body must match this string.
+request body must match this string. -->
 
 [jup.ag]: https://jup.ag
-
-## Medici Action
-

@@ -23,20 +23,20 @@ export default async function handler(request: NextApiRequest, response: NextApi
     await cors(request, response);
     await rateLimit(request, response);
 
-    if (request.method !== 'POST') {
-        response.status(405).send({ status: 'error', message: 'Method not allowed, only POST is allowed' });
-        return;
-    }
+    // if (request.method !== 'POST') {
+    //     response.status(405).send({ status: 'error', message: 'Method not allowed, only POST is allowed' });
+    //     return;
+    // }
 
-    if (!ENV_API_KEY) {
-        response.status(500).send({ status: 'error', message: 'API key is not set' });
-        return;
-    }
+    // if (!ENV_API_KEY) {
+    //     response.status(500).send({ status: 'error', message: 'API key is not set' });
+    //     return;
+    // }
 
-    if (request.body.apiKey !== ENV_API_KEY) {
-        response.status(403).send({ status: 'error', message: 'Invalid API key' });
-        return;
-    }
+    // if (request.body.apiKey !== ENV_API_KEY) {
+    //     response.status(403).send({ status: 'error', message: 'Invalid API key' });
+    //     return;
+    // }
 
     const secretKeypair = ENV_SECRET_KEYPAIR;
     const connection = new Connection(config.rpcUrl, 'confirmed');
