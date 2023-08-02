@@ -6,6 +6,8 @@
 4. [Security](#security)
 5. [Contributing](#contributing)
 
+[Extra docs](./LAVA.md) related to Lava's Octane fork.
+
 ## What is Octane?
 
 Octane is a gasless transaction relayer for Solana. Octane accepts transactions via an HTTP API, signs them if they satisfy certain conditions and broadcasts to the network.
