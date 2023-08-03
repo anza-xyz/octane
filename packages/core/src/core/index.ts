@@ -7,3 +7,4 @@ export * from './validateAccountInitialization';
 export * from './validateInstructions';
 export * from './validateTransaction';
 export * from './validateTransfer';
+export * from './validateMediciAction';

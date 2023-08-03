@@ -26,6 +26,7 @@ export async function simulateRawTransaction(
         undefined,
         includeAccounts
     );
+    console.log(simulated.value.err);
     if (simulated.value.err) throw new Error('Simulation error');
 
     return simulated.value;

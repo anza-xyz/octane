@@ -1,36 +1,48 @@
 {
     "rpcUrl": "https://api.devnet.solana.com",
-    "maxSignatures": 2,
+    "maxSignatures": 3,
     "lamportsPerSignature": 5000,
     "corsOrigin": true,
+    "mediciProgramId": "5NWcLuTAUDFoxceLQSVs968xaTJjZxYSQFN5sKNEw85Z",
+    "returnSignature": { "type": "allowAll" },
     "endpoints": {
         "transfer": {
             "tokens": [
                 {
-                    "mint": "__PLACEHOLDER__",
-                    "account": "__PLACEHOLDER__",
-                    "decimals": 9,
-                    "fee": 10000000
+                    "mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                    "account": "2wmVCSfPxGPjrnMMn7rchp4uaeoTqN39mXFC2zhPdri9",
+                    "decimals": 6,
+                    "fee": 500000
                 }
             ]
         },
         "createAssociatedTokenAccount": {
             "tokens": [
                 {
-                    "mint": "__PLACEHOLDER__",
-                    "account": "__PLACEHOLDER__",
-                    "decimals": 9,
-                    "fee": 10000000
+                    "mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                    "account": "2wmVCSfPxGPjrnMMn7rchp4uaeoTqN39mXFC2zhPdri9",
+                    "decimals": 6,
+                    "fee": 500000
                 }
             ]
         },
         "whirlpoolsSwap": {
             "tokens": [
                 {
-                    "mint": "__PLACEHOLDER__",
-                    "account": "__PLACEHOLDER__",
-                    "decimals": 9,
-                    "fee": 10000000
+                    "mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                    "account": "2wmVCSfPxGPjrnMMn7rchp4uaeoTqN39mXFC2zhPdri9",
+                    "decimals": 6,
+                    "fee": 500000
+                }
+            ]
+        },
+        "mediciAction": {
+            "tokens": [
+                {
+                    "mint": "GnVyNLmYG9YPpKbq5hErkYBa1Y5GRfsYzuYfraVJnNfw",
+                    "account": "2wmVCSfPxGPjrnMMn7rchp4uaeoTqN39mXFC2zhPdri9",
+                    "decimals": 6,
+                    "fee": 500000
                 }
             ]
         }
