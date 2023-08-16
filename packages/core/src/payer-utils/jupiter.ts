@@ -99,7 +99,7 @@ export async function getRoutes(
 
 export async function getSwapTransactions(wallet: PublicKey, route: Route): Promise<SwapTransactions> {
     const decodeTransactionOrNull = (serialized: string | null) => (
-        serialized !== null ? Transaction.from(Buffer.from(serialized, 'base64')) : null
+        serialized != null ? Transaction.from(Buffer.from(serialized, 'base64')) : null
     );
 
     const response = (
