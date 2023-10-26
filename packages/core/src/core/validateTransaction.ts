@@ -11,6 +11,7 @@ export async function validateTransaction(
     maxSignatures: number,
     lamportsPerSignature: number
 ): Promise<{ signature: TransactionSignature; rawTransaction: Buffer }> {
+    console.log("validateTransaction(): transaction=" + transaction);
     // Check the fee payer and blockhash for basic validity
     if (!transaction.feePayer?.equals(feePayer.publicKey)) throw new Error('invalid fee payer');
     if (!transaction.recentBlockhash) throw new Error('missing recent blockhash');
