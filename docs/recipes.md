@@ -95,7 +95,7 @@ When using Octane as a library, you run swaps without charging any fees. Make su
 
 If you would like to onboard users with completely empty wallets, you can sponsor their transactions.
 
-In this case, you can use [Octane as a library](docs/library.md).
+In this case, you can use [Octane as a library](./library.md).
 
 Create an HTTP endpoint on your backend app that:
 * Validates that user is authenticated
