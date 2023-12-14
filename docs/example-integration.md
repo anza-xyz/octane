@@ -1,6 +1,6 @@
 # Example integration
 
-This guide will walk you though integrating with an existing Octane node to send a gasless transfer.
+This guide will walk you through integrating with an existing Octane node to send a gasless transfer.
 
 ## Load Octane config
 
