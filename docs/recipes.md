@@ -10,7 +10,7 @@ To do that, you need form a transaction in your client code (whether it's a mobi
 
 Octane's configuration with fee payer public key and fee amount for your operations can be loaded by calling `/api` endpoint.
 
-Payload instructions shouldn't create any new accounts. If your use cases requires to create new accounts, go to the just-in-time swaps section.
+Payload instructions shouldn't create any new accounts. If your use cases require to create new accounts, go to the just-in-time swaps section.
 
 It's recommended to go through Octane flow only if user's wallet doesn't have any SOL to send transactions.
 
@@ -71,7 +71,7 @@ It's recommended to use this Octane flow only if user doesn't have SOL. Fallback
 
 _Who can use it?_
 * Wallets: as part of their swap interface or on transaction signing modal when user doesn't have enough SOL to run some transaction
-* Dapps: as a standalone function or as a tool to get enough SOL to run in-app transactin
+* Dapps: as a standalone function or as a tool to get enough SOL to run in-app transactions
 
 _Examples:_
 * [A swap using Whirlpools in Next.js app](https://github.com/sevazhidkov/octane-demo/blob/main/src/views/swap.tsx)
@@ -113,7 +113,7 @@ You should pass payload transaction from client to this endpoint. The passed tra
 By establishing limits and regularly topping up the fee payer's wallet, your users will be able to run transactions while having empty wallets.
 
 _Who can use it?_
-* Dapps that want to onboard users with empty wallets and run transactions that do no require liquid funds (creating your own token or a DAO, SPL memo, etc.)
+* Dapps that want to onboard users with empty wallets and run transactions that do not require liquid funds (creating your own token or a DAO, SPL memo, etc.)
 
 _Examples:_
 * [Backend endpoints for fully sponsored transaction](https://github.com/sevazhidkov/octane-demo/blob/main/src/pages/api/auth-transactions/send.ts)
