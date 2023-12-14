@@ -104,7 +104,7 @@ Follow these recommendations to minimize risks:
 
 ## Contributing
 
-Octane is a great way to start contributing in the Solana ecosystem. Since Octane is just an HTTP server written on Typescript, you don't have know Rust or learn how to build programs on Solana.
+Octane is a great way to start contributing in the Solana ecosystem. Since Octane is just an HTTP server written on Typescript, you don't have to know Rust or learn how to build programs on Solana.
 
 Some ideas for your first PRs:
 * More tests with various scenarios focused on Octane security
