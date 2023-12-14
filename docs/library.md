@@ -70,7 +70,7 @@ b) the second instruction creates an associated token account with initializatio
 
 This action allows end users to transfer some tokens to a new associated token account, while paying rent fees in SPL tokens instead of SOL.
 
-Token fee for this operation should be higher then usual. Node owners pay SOL for both transaction fees and rent exemption of the newly created account.
+Token fee for this operation should be higher than usual. Node owners pay SOL for both transaction fees and rent exemption of the newly created account.
 
 ```javascript
 const { signature } = await createAccountIfTokenFeePaid(
