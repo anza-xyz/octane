@@ -42,8 +42,8 @@ Endpoints like `transfer` and `buildWhirlpoolSwap` require less SOL, so margins 
 | Argument                       | Description                                                                                                                                                            | Default value |
 |--------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
 | -t, --tokens-from-top <number> | Tokens from the top of Jupiter aggregator to include                                                                                                                   | 10            |
-| -m, --margin <number>          | Part of total user-paid fee that fee payers takes as a surplus to transaction costs. From 0 to 1. For example, 0.5 would mean that user pays 2x the SOL signature fee. | 0.9           |
-| -a, --include-account-fees     | Includes cost creating a associated token account in each fee pre-margin. Use this flag when filling out the endpoints.createAssociatedAccount part of config.         |               |
+| -m, --margin <number>          | Part of total user-paid fee that fee payers take as a surplus to transaction costs. From 0 to 1. For example, 0.5 would mean that user pays 2x the SOL signature fee. | 0.9           |
+| -a, --include-account-fees     | Includes cost creating an associated token account in each fee pre-margin. Use this flag when filling out the endpoints.createAssociatedAccount part of config.         |               |
 
 ## Generating a config entry
 
@@ -53,8 +53,8 @@ Generates a config entry for a single provided token. All rules of `generate-con
 
 | Argument                       | Description                                                                                                                                                            | Default value |
 |--------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
-| -m, --margin <number>          | Part of total user-paid fee that fee payers takes as a surplus to transaction costs. From 0 to 1. For example, 0.5 would mean that user pays 2x the SOL signature fee. | 0.9           |
-| -a, --include-account-fees     | Includes cost creating a associated token account in each fee pre-margin. Use this flag when filling out the endpoints.createAssociatedAccount part of config.         |               |
+| -m, --margin <number>          | Part of total user-paid fee that fee payers take as a surplus to transaction costs. From 0 to 1. For example, 0.5 would mean that user pays 2x the SOL signature fee. | 0.9           |
+| -a, --include-account-fees     | Includes cost creating an associated token account in each fee pre-margin. Use this flag when filling out the endpoints.createAssociatedAccount part of config.         |               |
 
 
 ## Swapping tokens
